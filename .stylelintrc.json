@@ -1,0 +1,17 @@
+{
+    "extends": ["stylelint-config-standard-less"],
+    "plugins": ["stylelint-prettier"],
+    "rules": {
+        "prettier/prettier": true,
+        "selector-class-pattern": null,
+        "block-no-empty": null,
+        "declaration-block-no-redundant-longhand-properties": null,
+        "no-invalid-position-at-import-rule": null,
+        "at-rule-no-unknown": null,
+        "color-no-invalid-hex": null,
+        "less/color-no-invalid-hex": null,
+        "less/no-duplicate-variables": null,
+        "no-descending-specificity": null,
+        "selector-id-pattern": null
+    }
+}
