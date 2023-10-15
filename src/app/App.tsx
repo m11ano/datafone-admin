@@ -20,9 +20,7 @@ const App = () => {
     return (
         <div className={classNames('app', {})}>
             <Suspense fallback="">
-                <div className="content-page">
-                    <AppRouter />
-                </div>
+                <AppRouter />
             </Suspense>
         </div>
     );

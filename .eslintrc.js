@@ -44,6 +44,7 @@ module.exports = {
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'error',
         'no-undef': 'off',
+        'no-useless-catch': 'off',
         // 'm1l/path-checker': 'error',
         'unused-imports/no-unused-imports': 'error',
         'unused-imports/no-unused-vars': [

@@ -1,0 +1,42 @@
+@size-xs: 575px;
+@size-sm: 576px;
+@size-md: 768px;
+@size-lg: 992px;
+@size-xl: 1200px;
+@size-xxl: 1600px;
+
+.width-size-min(@size, @content) {
+    @media screen and (min-width: @size) {
+        @content();
+    }
+}
+
+.width-size-max(@size, @content) {
+    @media screen and (max-width: @size) {
+        @content();
+    }
+}
+
+.width-size-xs(@content) {
+    .width-size-max(@size-xs, @content);
+}
+
+.width-size-sm(@content) {
+    .width-size-min(@size-sm, @content);
+}
+
+.width-size-md(@content) {
+    .width-size-min(@size-md, @content);
+}
+
+.width-size-lg(@content) {
+    .width-size-min(@size-lg, @content);
+}
+
+.width-size-xl(@content) {
+    .width-size-min(@size-xl, @content);
+}
+
+.width-size-xxl(@content) {
+    .width-size-min(@size-xxl, @content);
+}
