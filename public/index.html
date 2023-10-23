@@ -11,5 +11,8 @@
     <body>
         <noscript><b>Enable JavaScript to run this app.</b></noscript>
         <div id="root"></div>
+        <% for (var js in htmlWebpackPlugin.files.js) { %>
+        <script src="<%= htmlWebpackPlugin.files.js[js] %>"></script>
+        <% } %>
     </body>
 </html>

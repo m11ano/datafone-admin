@@ -1,19 +1,21 @@
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
-import { IAuthUser } from '../model/types/iAuthUser';
+import { IAuthUserData } from '../model/types/iAuthUserData';
 
 interface IUseAuth {
-    user: null | IAuthUser;
+    userData: null | IAuthUserData;
     isLoading: boolean;
-    setUser: (data: IAuthUser) => void;
+    setUserData: (data: IAuthUserData) => void;
+    logout: () => void;
 }
 
 export function useAuth(): IUseAuth {
-    const { user, isLoading, setUser } = useContext(AuthContext);
+    const { userData, isLoading, setUserData, logout } = useContext(AuthContext);
 
     return {
-        user,
+        userData,
         isLoading,
-        setUser,
+        setUserData,
+        logout,
     };
 }

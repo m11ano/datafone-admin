@@ -1,4 +1,5 @@
 import type { Configuration as DevServerConfiguration } from 'webpack-dev-server';
+import path from 'path';
 import { type BuildOptions } from './types/config';
 
 export function buildDevServer(options: BuildOptions): DevServerConfiguration {
@@ -7,8 +8,12 @@ export function buildDevServer(options: BuildOptions): DevServerConfiguration {
         // open: true,
         historyApiFallback: true,
         hot: true,
-        devMiddleware: {
-            publicPath: process.env.urlPrefix || '/',
+        static: {
+            directory: path.join(__dirname, "public")
           },
+        devMiddleware: {
+            // publicPath: process.env.urlPrefix || '/',
+            publicPath: 'auto',
+        },
     };
 }

@@ -1,56 +1,47 @@
-import React, { useMemo, useState, ReactNode, useLayoutEffect } from 'react';
-import { IAuthUser } from '../model/types/iAuthUser';
+import { useMemo, useState, ReactNode, useLayoutEffect, useCallback } from 'react';
+import { IAuthUserData } from '../model/types/iAuthUserData';
 import { AuthContext } from '../lib/AuthContext';
-import { $api } from '@/shared/api/api';
+import { initAuthRequest } from '../api/initAuthRequest';
+import { logoutRequest } from '../api/logoutRequest';
 
 interface AuthProdiverProps {
-    initialUser?: IAuthUser;
+    initialUserData?: IAuthUserData;
     children: ReactNode;
 }
 
 const AuthProvider = (props: AuthProdiverProps) => {
-    const { initialUser, children } = props;
+    const { initialUserData, children } = props;
 
-    const [authUser, setAuthUser] = useState<null | IAuthUser>(initialUser || null);
+    const [authUserData, setAuthUserData] = useState<null | IAuthUserData>(initialUserData || null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+
+    const logout = useCallback(() => {
+        setIsLoading(true);
+        logoutRequest().then(() => {
+            setAuthUserData(null);
+            setIsLoading(false);
+        });
+    }, []);
 
     const defaultProps = useMemo(
         () => ({
-            user: authUser,
+            userData: authUserData,
             isLoading,
-            setUser: setAuthUser,
+            setUserData: setAuthUserData,
+            logout,
         }),
-        [authUser, isLoading],
+        [authUserData, isLoading, logout],
     );
 
-    // setTimeout(() => {
-    //     // setIsLoading(false);
-    //     // setAuthUser({
-    //     //     id: 1,
-    //     //     email: '123',
-    //     // });
-    // }, 2000);
-
     useLayoutEffect(() => {
-        // setIsLoading(false);
-        // try {
-        //     const initData = await $api.post('auth/admin/init');
-        //     console.log(initData);
-        // } catch (e) {
-        //     console.log(e);
-        // }
-        $api.get<IAuthUser>('auth/admin/init')
-            .then((initData) => {
-                setAuthUser(initData.data);
+        setIsLoading(true);
+        initAuthRequest()
+            .then((data) => {
+                setAuthUserData(data);
                 setIsLoading(false);
             })
             .catch((e) => {
                 console.log(e);
-                if (e.response && e.response.status === 401 && e.response.statusText === 'Unauthorized') {
-                    setIsLoading(false);
-                } else {
-                    console.log(e);
-                }
             });
     }, []);
 

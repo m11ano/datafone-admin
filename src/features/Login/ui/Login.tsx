@@ -14,22 +14,21 @@ interface LoginProps {
 }
 
 type FieldType = {
-    email?: string;
-    password?: string;
+    email: string;
+    password: string;
 };
 
 export const Login = memo((props: LoginProps) => {
     const { className } = props;
 
     const [errors, setErrors] = useState<string[]>([]);
-    const { setUser } = useAuth();
+    const { setUserData } = useAuth();
 
     const onFinish = async (data: ILoginRequest) => {
         setErrors([]);
         try {
             const result = await loginRequest(data);
-            setUser(result);
-            console.log(result);
+            setUserData(result);
         } catch (e: unknown) {
             if (e instanceof RequestError) {
                 setErrors(e.errors);
@@ -39,9 +38,8 @@ export const Login = memo((props: LoginProps) => {
         }
     };
 
-    const onFinishFailed = (errorInfo: any) => {
+    const onFinishFailed = () => {
         setErrors([]);
-        console.log('Failed:', errorInfo);
     };
 
     return (
@@ -67,7 +65,7 @@ export const Login = memo((props: LoginProps) => {
                     wrapperCol={{ span: 16 }}
                     style={{ maxWidth: 460, minWidth: 240, width: '100%' }}
                     size="large"
-                    initialValues={{ email: 'edkirill@yandex.ru', password: '123456' }}
+                    initialValues={{}}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
@@ -103,7 +101,7 @@ export const Login = memo((props: LoginProps) => {
                         wrapperCol={{ offset: 0, span: 24, sm: { offset: 8, span: 16 } }}
                         className={cls.forgetPass}
                     >
-                        <Link to="/">Забыли пароль?</Link>
+                        <Link to="/recover-password">Забыли пароль?</Link>
                     </Form.Item>
                 </Form>
             </Card>

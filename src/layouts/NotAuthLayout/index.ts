@@ -1,0 +1,1 @@
+export { NotAuthLayout } from './NotAuthLayout';

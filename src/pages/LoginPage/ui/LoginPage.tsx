@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { memo } from 'react';
-import { NotAuthLayout } from '@/layouts/NotAuthLayout/NotAuthLayout';
+import { NotAuthLayout } from '@/layouts/NotAuthLayout';
 import { Login } from '@/features/Login';
 import cls from './LoginPage.module.less';
 

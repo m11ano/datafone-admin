@@ -1,14 +1,16 @@
 import { createContext } from 'react';
-import { IAuthUser } from '../model/types/iAuthUser';
+import { IAuthUserData } from '../model/types/iAuthUserData';
 
 export interface AuthContextProps {
-    user: null | IAuthUser;
+    userData: null | IAuthUserData;
     isLoading: boolean;
-    setUser: (data: IAuthUser) => void;
+    setUserData: (data: IAuthUserData) => void;
+    logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextProps>({
-    user: null,
+    userData: null,
     isLoading: false,
-    setUser: () => {},
+    setUserData: () => {},
+    logout: () => {},
 });

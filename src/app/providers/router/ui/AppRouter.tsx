@@ -1,9 +1,9 @@
 import { Suspense, memo, useMemo } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { routeConfig } from '@/shared/config/routeConfig/routeConfig';
 import { useAuth } from '@/app/providers/AuthProvider';
 import { notAuthConfig } from '../config/notAuthConfig';
 import { FullPageLoader } from '@/shared/ui/FullPageLoader/FullPageLoader';
+import { authConfig } from '../config/authConfig';
 
 const AppRouter = () => {
     // const isAuth = useSelector(getUserAuthData);
@@ -19,9 +19,9 @@ const AppRouter = () => {
     //     [isAuth],
     // );
 
-    const { user, isLoading } = useAuth();
+    const { userData, isLoading } = useAuth();
 
-    const routes = useMemo(() => (user === null ? notAuthConfig : Object.values(routeConfig)), [user]);
+    const routes = useMemo(() => (userData === null ? notAuthConfig : authConfig), [userData]);
 
     if (isLoading) {
         return <FullPageLoader />;
@@ -35,7 +35,7 @@ const AppRouter = () => {
                     path={path}
                     element={
                         <div>
-                            {user === null ? (
+                            {userData === null ? (
                                 <Suspense fallback="">
                                     <div>{element}</div>
                                 </Suspense>

@@ -19,7 +19,7 @@ export function buildWebpackConfig(options: BuildOptions): webpack.Configuration
             filename: '[name].[contenthash].js',
             path: paths.build,
             clean: true,
-            publicPath: process.env.urlPrefix || '/',
+            publicPath: `${process.env.urlPrefix}/` || '/',
         },
         plugins: buildPlugins(options),
         devtool: isDev ? 'eval-cheap-module-source-map' : undefined,
