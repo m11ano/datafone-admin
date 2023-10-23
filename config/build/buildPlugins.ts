@@ -8,7 +8,7 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { type BuildOptions } from './types/config';
 
 export function buildPlugins({
-    paths, isDev, apiUrl, project,
+    paths, isDev, apiUrl, project, urlPrefix
 }: BuildOptions): webpack.WebpackPluginInstance[] {
     const plugins = [
         new HtmlWebpackPlugin({
@@ -18,6 +18,7 @@ export function buildPlugins({
         new webpack.DefinePlugin({
             __IS_DEV__: JSON.stringify(isDev),
             __API__: JSON.stringify(apiUrl),
+            __APP_URL_PREFIX__: JSON.stringify(urlPrefix),
             __PROJECT__: JSON.stringify(project),
         }),
         new ForkTsCheckerWebpackPlugin({

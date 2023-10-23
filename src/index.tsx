@@ -17,7 +17,7 @@ if (!container) {
 const root = createRoot(container);
 
 root.render(
-    <BrowserRouter>
+    <BrowserRouter basename={__APP_URL_PREFIX__}>
         <StoreProvider>
             <ErrorBoundary>
                 <AuthProvider>
