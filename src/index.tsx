@@ -22,7 +22,6 @@ root.render(
             <ErrorBoundary>
                 <AuthProvider>
                     <ThemeProvider>
-                        123
                         <App />
                     </ThemeProvider>
                 </AuthProvider>

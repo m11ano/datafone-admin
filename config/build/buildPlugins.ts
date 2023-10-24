@@ -8,11 +8,12 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { type BuildOptions } from './types/config';
 
 export function buildPlugins({
-    paths, isDev, apiUrl, project, urlPrefix
+    paths, isDev, apiUrl, project, urlPrefix, recaptchaV2Public
 }: BuildOptions): webpack.WebpackPluginInstance[] {
     const plugins = [
         new HtmlWebpackPlugin({
             template: paths.html,
+            inject: false,
         }),
         new webpack.ProgressPlugin(),
         new webpack.DefinePlugin({
@@ -20,6 +21,7 @@ export function buildPlugins({
             __API__: JSON.stringify(apiUrl),
             __APP_URL_PREFIX__: JSON.stringify(urlPrefix),
             __PROJECT__: JSON.stringify(project),
+            __RECAPTCHA_V2_PUBLIC__: JSON.stringify(recaptchaV2Public),
         }),
         new ForkTsCheckerWebpackPlugin({
             typescript: {

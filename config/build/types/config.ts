@@ -10,7 +10,7 @@ export interface BuildPaths {
 export interface BuildEnv {
     mode: BuildMode
     port: number
-    apiUrl: string
+    API_URL: string
 }
 
 export interface BuildOptions {
@@ -20,5 +20,6 @@ export interface BuildOptions {
     port: number
     apiUrl: string;
     urlPrefix: string;
+    recaptchaV2Public: string;
     project: 'storybook' | 'frontend' | 'jest';
 }

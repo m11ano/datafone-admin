@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { memo, useState } from 'react';
 import { Alert, Button, Card, Form, Input } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import cls from './Login.module.less';
 import { ILoginRequest } from '../model/types/iLoginRequest';
 import { loginRequest } from '../api/loginRequest';
@@ -21,20 +21,30 @@ type FieldType = {
 export const Login = memo((props: LoginProps) => {
     const { className } = props;
 
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<string[]>([]);
     const { setUserData } = useAuth();
 
     const onFinish = async (data: ILoginRequest) => {
+        if (isLoading) {
+            return;
+        }
+
         setErrors([]);
+        setIsLoading(true);
         try {
             const result = await loginRequest(data);
             setUserData(result);
+            navigate('/');
         } catch (e: unknown) {
             if (e instanceof RequestError) {
                 setErrors(e.errors);
             } else {
                 console.log(e);
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -52,7 +62,7 @@ export const Login = memo((props: LoginProps) => {
                 {errors.length > 0 && (
                     <Alert
                         message={errors.map((err) => (
-                            <div>{err}</div>
+                            <div key={err}>{err}</div>
                         ))}
                         type="error"
                         showIcon
@@ -73,9 +83,12 @@ export const Login = memo((props: LoginProps) => {
                     <Form.Item<FieldType>
                         label="E-mail"
                         name="email"
-                        rules={[{ required: true, message: 'Введите e-mail!' }]}
+                        rules={[{ required: true, type: 'email', message: 'Введите e-mail!' }]}
                     >
-                        <Input prefix={<UserOutlined />} />
+                        <Input
+                            prefix={<UserOutlined />}
+                            disabled={isLoading}
+                        />
                     </Form.Item>
 
                     <Form.Item<FieldType>
@@ -83,7 +96,10 @@ export const Login = memo((props: LoginProps) => {
                         name="password"
                         rules={[{ required: true, message: 'Введите пароль!' }]}
                     >
-                        <Input.Password prefix={<LockOutlined />} />
+                        <Input.Password
+                            prefix={<LockOutlined />}
+                            disabled={isLoading}
+                        />
                     </Form.Item>
 
                     <Form.Item
@@ -93,6 +109,7 @@ export const Login = memo((props: LoginProps) => {
                         <Button
                             type="primary"
                             htmlType="submit"
+                            loading={isLoading}
                         >
                             Войти
                         </Button>

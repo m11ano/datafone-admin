@@ -1,4 +1,5 @@
 import { useMemo, useState, ReactNode, useLayoutEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IAuthUserData } from '../model/types/iAuthUserData';
 import { AuthContext } from '../lib/AuthContext';
 import { initAuthRequest } from '../api/initAuthRequest';
@@ -12,6 +13,7 @@ interface AuthProdiverProps {
 const AuthProvider = (props: AuthProdiverProps) => {
     const { initialUserData, children } = props;
 
+    const navigate = useNavigate();
     const [authUserData, setAuthUserData] = useState<null | IAuthUserData>(initialUserData || null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -20,8 +22,9 @@ const AuthProvider = (props: AuthProdiverProps) => {
         logoutRequest().then(() => {
             setAuthUserData(null);
             setIsLoading(false);
+            navigate('/');
         });
-    }, []);
+    }, [navigate]);
 
     const defaultProps = useMemo(
         () => ({
