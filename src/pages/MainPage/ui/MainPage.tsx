@@ -10,12 +10,12 @@ interface MainPageProps {
 
 export const MainPage = memo((props: MainPageProps) => {
     const { className } = props;
-    const { userData } = useAuth();
+    const { authUserData } = useAuth();
 
     return (
         <AuthLayout>
             <div className={classNames(cls.mainPage, [className])}>
-                Добро пожаловать в админку! {JSON.stringify(userData)}
+                Добро пожаловать в админку! {JSON.stringify(authUserData)}
             </div>
         </AuthLayout>
     );

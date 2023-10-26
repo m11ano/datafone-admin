@@ -1,4 +1,4 @@
-import React, { useMemo, useState, ReactNode } from 'react';
+import React, { useMemo, useState, ReactNode, useEffect } from 'react';
 import { ConfigProvider, theme as themeAntd } from 'antd';
 import ruRU from 'antd/locale/ru_RU';
 import { LOCAL_STORAGE_THEME_KEY, Theme, ThemeContext } from '../lib/ThemeContext';
@@ -25,13 +25,17 @@ const ThemeProvider = (props: ThemeProdiverProps) => {
         [theme],
     );
 
+    useEffect(() => {
+        document.documentElement.dataset.theme = theme;
+    }, [theme]);
+
     return (
         <ThemeContext.Provider value={defaultProps}>
             <ConfigProvider
                 locale={ruRU}
                 theme={{
                     // algorithm: themeAntd.darkAlgorithm,
-                    algorithm: themeAntd.defaultAlgorithm,
+                    algorithm: theme === Theme.DARK ? themeAntd.darkAlgorithm : themeAntd.defaultAlgorithm,
                     // token: {
                     //     // Seed Token
                     //     colorPrimary: '#00b96b',

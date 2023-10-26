@@ -19,9 +19,9 @@ const AppRouter = () => {
     //     [isAuth],
     // );
 
-    const { userData, isLoading } = useAuth();
+    const { authUserData, isLoading } = useAuth();
 
-    const routes = useMemo(() => (userData === null ? notAuthConfig : authConfig), [userData]);
+    const routes = useMemo(() => (authUserData === null ? notAuthConfig : authConfig), [authUserData]);
 
     if (isLoading) {
         return <FullPageLoader />;
@@ -35,7 +35,7 @@ const AppRouter = () => {
                     path={path}
                     element={
                         <div>
-                            {userData === null ? (
+                            {authUserData === null ? (
                                 <Suspense fallback="">
                                     <div>{element}</div>
                                 </Suspense>

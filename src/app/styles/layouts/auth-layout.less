@@ -1,0 +1,42 @@
+.authLayout {
+}
+
+header {
+    background: var(--bg-smooth-color);
+
+    > div {
+        display: flex;
+        align-items: center;
+        .std-wrapper(15px, 15px, 10px, 10px);
+
+        > .logo {
+            flex-basis: 200px;
+
+            .width-size-md-less({
+                flex-basis: auto;
+            });
+        }
+
+        .menu {
+            .width-size-md-less({
+                display: none;
+            });
+        }
+
+        > .userData {
+            margin-left: auto;
+
+            .hello {
+                font-size: 14px;
+
+                .width-size-lg-less({
+                    display: none;
+                });
+            }
+
+            .themeSwitcher {
+                font-size: 0;
+            }
+        }
+    }
+}
