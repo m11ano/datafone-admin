@@ -2,10 +2,9 @@ import classNames from 'classnames';
 import { memo, useState } from 'react';
 import { Alert, Button, Card, Form, Input } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import cls from './Login.module.less';
-import { ILoginRequest } from '../model/types/iLoginRequest';
-import { loginRequest } from '../api/loginRequest';
+import { ILoginRequest } from '../../../app/providers/AuthProvider/model/types/iLoginRequest';
 import { RequestError } from '@/shared/lib/errors/RequestError';
 import { useAuth } from '@/app/providers/AuthProvider';
 
@@ -20,11 +19,9 @@ type FieldType = {
 
 export const Login = memo((props: LoginProps) => {
     const { className } = props;
-
-    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<string[]>([]);
-    const { setUserData } = useAuth();
+    const { login } = useAuth();
 
     const onFinish = async (data: ILoginRequest) => {
         if (isLoading) {
@@ -34,9 +31,7 @@ export const Login = memo((props: LoginProps) => {
         setErrors([]);
         setIsLoading(true);
         try {
-            const result = await loginRequest(data);
-            setUserData(result);
-            navigate('/');
+            await login(data);
         } catch (e: unknown) {
             if (e instanceof RequestError) {
                 setErrors(e.errors);

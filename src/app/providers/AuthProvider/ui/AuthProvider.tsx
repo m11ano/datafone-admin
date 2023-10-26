@@ -4,6 +4,8 @@ import { IAuthUserData } from '../model/types/iAuthUserData';
 import { AuthContext } from '../lib/AuthContext';
 import { initAuthRequest } from '../api/initAuthRequest';
 import { logoutRequest } from '../api/logoutRequest';
+import { ILoginRequest } from '../model/types/iLoginRequest';
+import { loginRequest } from '../api/loginRequest';
 
 interface AuthProdiverProps {
     initialUserData?: IAuthUserData;
@@ -17,23 +19,48 @@ const AuthProvider = (props: AuthProdiverProps) => {
     const [authUserData, setAuthUserData] = useState<null | IAuthUserData>(initialUserData || null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const logout = useCallback(() => {
-        setIsLoading(true);
-        logoutRequest().then(() => {
-            setAuthUserData(null);
-            setIsLoading(false);
-            navigate('/');
-        });
-    }, [navigate]);
+    const login = useCallback(
+        (data: ILoginRequest): Promise<void> =>
+            new Promise((resolve, reject) => {
+                loginRequest(data)
+                    .then((userData) => {
+                        setAuthUserData(userData);
+                        navigate('/');
+                        resolve();
+                    })
+                    .catch((e) => {
+                        reject(e);
+                    });
+            }),
+        [navigate],
+    );
+
+    const logout = useCallback(
+        (): Promise<void> =>
+            new Promise((resolve, reject) => {
+                setIsLoading(true);
+                logoutRequest()
+                    .then(() => {
+                        setAuthUserData(null);
+                        setIsLoading(false);
+                        navigate('/');
+                        resolve();
+                    })
+                    .catch((e) => {
+                        reject(e);
+                    });
+            }),
+        [navigate],
+    );
 
     const defaultProps = useMemo(
         () => ({
             userData: authUserData,
             isLoading,
-            setUserData: setAuthUserData,
+            login,
             logout,
         }),
-        [authUserData, isLoading, logout],
+        [authUserData, isLoading, login, logout],
     );
 
     useLayoutEffect(() => {
