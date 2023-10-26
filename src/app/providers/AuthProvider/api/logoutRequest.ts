@@ -2,7 +2,7 @@ import { $api } from '@/shared/api/api';
 
 export const logoutRequest = (): Promise<true> =>
     new Promise((resolve, err) => {
-        $api.get<boolean>('auth/admin/logout')
+        $api.get<null>('auth/admin/logout')
             .then(() => {
                 resolve(true);
             })

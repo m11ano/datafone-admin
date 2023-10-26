@@ -50,7 +50,7 @@ export const RecoverPassword = memo((props: RecoverPasswordProps) => {
         if (errors.length === 0) {
             setIsLoading(true);
             try {
-                const result = await recoverPasswordRequest({ ...data, recaptcha: captchaValue! });
+                await recoverPasswordRequest(data, captchaValue!);
                 setStep(2);
             } catch (e: unknown) {
                 if (e instanceof RequestError) {
