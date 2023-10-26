@@ -57,7 +57,9 @@ export const AuthLayout = (props: AuthLayoutProps) => {
             <header>
                 <div>
                     <div className="logo">Datafone.ru</div>
-                    <div className="menu">Управление пользователями</div>
+                    {authUserData?.rights['core::access_to_admin_core_settings'] === true && (
+                        <div className="menu">Управление пользователями</div>
+                    )}
                     <div className="userData">
                         <Space size="middle">
                             <div className="hello">Привет, {authUserData?.user.firstName}!</div>
@@ -92,13 +94,6 @@ export const AuthLayout = (props: AuthLayoutProps) => {
                     </div>
                 </div>
             </header>
-            {children}
-            {children}
-            {children}
-            {children}
-            {children}
-            {children}
-            {children}
             {children}
         </div>
     );

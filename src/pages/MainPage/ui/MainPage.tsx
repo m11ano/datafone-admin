@@ -1,8 +1,7 @@
 import classNames from 'classnames';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import cls from './MainPage.module.less';
 import { useAuth } from '@/app/providers/AuthProvider';
-import { AuthLayout } from '@/layouts/AuthLayout';
 
 interface MainPageProps {
     className?: string;
@@ -12,11 +11,20 @@ export const MainPage = memo((props: MainPageProps) => {
     const { className } = props;
     const { authUserData } = useAuth();
 
+    const [counter, setCounter] = useState<number>(0);
+
     return (
-        <AuthLayout>
-            <div className={classNames(cls.mainPage, [className])}>
-                Добро пожаловать в админку! {JSON.stringify(authUserData)}
-            </div>
-        </AuthLayout>
+        <div className={classNames(cls.mainPage, [className])}>
+            Добро пожаловать в админку! {JSON.stringify(authUserData)}
+            {counter}{' '}
+            <button
+                type="button"
+                onClick={() => {
+                    setCounter((pr) => pr + 1);
+                }}
+            >
+                +
+            </button>
+        </div>
     );
 });

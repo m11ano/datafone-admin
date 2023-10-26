@@ -1,3 +1,4 @@
-import AppRouter from './ui/AppRouter';
+import AuthAppRouter from './ui/AuthAppRouter';
+import NotAuthAppRouter from './ui/NotAuthAppRouter';
 
-export { AppRouter };
+export { AuthAppRouter, NotAuthAppRouter };
