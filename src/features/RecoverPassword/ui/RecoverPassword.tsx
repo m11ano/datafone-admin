@@ -78,7 +78,6 @@ export const RecoverPassword = memo((props: RecoverPasswordProps) => {
                     </div>
                 }
                 bordered={false}
-                style={{ maxWidth: 500 }}
             >
                 {step === 1 && (
                     <>
@@ -96,7 +95,6 @@ export const RecoverPassword = memo((props: RecoverPasswordProps) => {
                             name="reset_password"
                             labelCol={{ span: 8 }}
                             wrapperCol={{ span: 16 }}
-                            style={{ maxWidth: 460, minWidth: 240, width: '100%' }}
                             size="large"
                             initialValues={{}}
                             onFinish={onFinish}

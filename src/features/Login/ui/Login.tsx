@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { memo, useState } from 'react';
 import { Alert, Button, Card, Form, Input } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import cls from './Login.module.less';
 import { ILoginRequest } from '../../../app/providers/AuthProvider/model/types/iLoginRequest';
 import { RequestError } from '@/shared/lib/errors/RequestError';
@@ -22,6 +22,7 @@ export const Login = memo((props: LoginProps) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<string[]>([]);
     const { login } = useAuth();
+    const navigate = useNavigate();
 
     const onFinish = async (data: ILoginRequest) => {
         if (isLoading) {
@@ -32,6 +33,7 @@ export const Login = memo((props: LoginProps) => {
         setIsLoading(true);
         try {
             await login(data);
+            navigate('/');
         } catch (e: unknown) {
             if (e instanceof RequestError) {
                 setErrors(e.errors);
@@ -52,7 +54,7 @@ export const Login = memo((props: LoginProps) => {
             <Card
                 title="Вход в панель управления"
                 bordered={false}
-                style={{ maxWidth: 500 }}
+                className={cls.card}
             >
                 {errors.length > 0 && (
                     <Alert
@@ -68,7 +70,6 @@ export const Login = memo((props: LoginProps) => {
                     name="login"
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
-                    style={{ maxWidth: 460, minWidth: 240, width: '100%' }}
                     size="large"
                     initialValues={{}}
                     onFinish={onFinish}

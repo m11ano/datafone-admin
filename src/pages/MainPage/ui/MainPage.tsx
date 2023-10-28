@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { memo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import cls from './MainPage.module.less';
 import { useAuth } from '@/app/providers/AuthProvider';
 
@@ -16,7 +17,7 @@ export const MainPage = memo((props: MainPageProps) => {
     return (
         <div className={classNames(cls.mainPage, [className])}>
             Добро пожаловать в админку! {JSON.stringify(authUserData)}
-            {counter}{' '}
+            <div>{counter}</div>
             <button
                 type="button"
                 onClick={() => {
@@ -25,6 +26,7 @@ export const MainPage = memo((props: MainPageProps) => {
             >
                 +
             </button>
+            <Link to="/fdfdf">Редактировать профиль</Link>
         </div>
     );
 });

@@ -1,14 +1,19 @@
 import { Suspense, memo } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { authConfig } from '../config/authConfig';
+import { AuthLayout } from '@/layouts/AuthLayout';
 
 const AuthAppRouter = () => (
     <Routes>
-        {authConfig.map(({ element, path }) => (
+        {authConfig.map((route) => (
             <Route
-                key={path}
-                path={path}
-                element={<Suspense fallback="">{element}</Suspense>}
+                key={route.path}
+                path={route.path}
+                element={
+                    <Suspense fallback="">
+                        <AuthLayout>{route.element}</AuthLayout>
+                    </Suspense>
+                }
             />
         ))}
     </Routes>

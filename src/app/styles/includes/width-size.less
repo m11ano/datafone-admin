@@ -6,13 +6,13 @@
 @size-xxl: 1600px;
 
 .width-size-more(@size, @content) {
-    @media screen and (min-width: @size) {
+    @media screen and (min-width: (@size)) {
         @content();
     }
 }
 
 .width-size-less(@size, @content) {
-    @media screen and (max-width: @size) {
+    @media screen and (max-width: (@size - 1px)) {
         @content();
     }
 }

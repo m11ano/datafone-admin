@@ -1,41 +1,68 @@
+@header-height: 62px;
+
 .authLayout {
-}
+    > header {
+        background-color: var(--bg-smooth-color);
+        border-bottom: 1px solid var(--main-smooth-color);
+        height: @header-height;
+        overflow: hidden;
+        transition: background-color 0.2s;
 
-header {
-    background: var(--bg-smooth-color);
+        > div {
+            display: flex;
+            align-items: center;
+            .std-wrapper(15px, 15px, 10px, 10px);
 
-    > div {
-        display: flex;
-        align-items: center;
-        .std-wrapper(15px, 15px, 10px, 10px);
-
-        > .logo {
-            flex-basis: 200px;
-
-            .width-size-md-less({
-                flex-basis: auto;
-            });
-        }
-
-        .menu {
-            .width-size-md-less({
-                display: none;
-            });
-        }
-
-        > .userData {
-            margin-left: auto;
-
-            .hello {
-                font-size: 14px;
-
-                .width-size-lg-less({
+            > .menu {
+                .width-size-xl-more({
                     display: none;
                 });
             }
 
-            .themeSwitcher {
-                font-size: 0;
+            > .logo {
+                flex-basis: 200px;
+                .width-size-md-less({
+                    flex-basis: auto;
+                });
+            }
+
+            > .userData {
+                margin-left: auto;
+
+                .hello {
+                    font-size: 14px;
+
+                    .width-size-lg-less({
+                    display: none;
+                });
+                }
+
+                .themeSwitcher {
+                    font-size: 0;
+                }
+            }
+        }
+    }
+
+    > .content {
+        display: flex;
+        min-height: calc(100dvh - @header-height);
+
+        > aside {
+            background-color: var(--bg-smooth-color);
+            border-right: 1px solid var(--main-smooth-color);
+            padding: 15px 15px 15px 30px;
+            width: 300px;
+            flex-shrink: 0;
+            transition: background-color 0.2s;
+        }
+
+        > main {
+            width: 100%;
+
+            > div {
+                max-width: 1620px;
+                .std-wrapper(15px, 15px, 15px, 15px);
             }
         }
     }

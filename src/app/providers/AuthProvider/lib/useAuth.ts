@@ -1,5 +1,4 @@
 import { useCallback, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import { IAuthUserData } from '../model/types/iAuthUserData';
 import { ILoginRequest } from '../model/types/iLoginRequest';
@@ -14,9 +13,7 @@ interface IUseAuth {
 }
 
 export function useAuth(): IUseAuth {
-    // const { userData, isLoading, login, logout } = useContext(AuthContext);
     const { authUserData, setAuthUserData, isLoading, setIsLoading } = useContext(AuthContext);
-    const navigate = useNavigate();
 
     const login = useCallback(
         (data: ILoginRequest): Promise<void> =>
@@ -24,14 +21,13 @@ export function useAuth(): IUseAuth {
                 loginRequest(data)
                     .then((userData) => {
                         setAuthUserData?.(userData);
-                        navigate('/');
                         resolve();
                     })
                     .catch((e) => {
                         reject(e);
                     });
             }),
-        [navigate, setAuthUserData],
+        [setAuthUserData],
     );
 
     const logout = useCallback(
@@ -42,14 +38,13 @@ export function useAuth(): IUseAuth {
                     .then(() => {
                         setAuthUserData?.(null);
                         setIsLoading?.(false);
-                        navigate('/');
                         resolve();
                     })
                     .catch((e) => {
                         reject(e);
                     });
             }),
-        [navigate, setAuthUserData, setIsLoading],
+        [setAuthUserData, setIsLoading],
     );
 
     return {

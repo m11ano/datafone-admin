@@ -5,8 +5,6 @@ import { useTheme } from '@/app/providers/ThemeProvider';
 import { AuthAppRouter, NotAuthAppRouter } from './providers/router';
 import { useAuth } from './providers/AuthProvider';
 import { FullPageLoader } from '@/shared/ui/FullPageLoader/FullPageLoader';
-import { AuthLayout } from '@/layouts/AuthLayout';
-import { NotAuthLayout } from '@/layouts/NotAuthLayout';
 
 const App = () => {
     const { theme } = useTheme();
@@ -29,17 +27,7 @@ const App = () => {
 
     return (
         <div className={classNames('app')}>
-            <Suspense fallback="">
-                {authUserData === null ? (
-                    <NotAuthLayout>
-                        <NotAuthAppRouter />
-                    </NotAuthLayout>
-                ) : (
-                    <AuthLayout>
-                        <AuthAppRouter />
-                    </AuthLayout>
-                )}
-            </Suspense>
+            <Suspense fallback="">{authUserData === null ? <NotAuthAppRouter /> : <AuthAppRouter />}</Suspense>
         </div>
     );
 };

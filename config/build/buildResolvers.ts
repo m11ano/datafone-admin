@@ -1,4 +1,5 @@
 import type webpack from 'webpack';
+import path from 'path';
 import { type BuildOptions } from './types/config';
 
 export function buildResolvers(options: BuildOptions): webpack.ResolveOptions {
@@ -9,6 +10,7 @@ export function buildResolvers(options: BuildOptions): webpack.ResolveOptions {
         mainFiles: ['index'],
         alias: {
             '@': options.paths.src,
+            '~includes.less': path.resolve(options.paths.src, 'app/styles/includes/index.less')
         },
     };
 }
