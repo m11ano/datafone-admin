@@ -1,4 +1,4 @@
-import { useMemo, useState, ReactNode, useLayoutEffect } from 'react';
+import { useMemo, useState, ReactNode, useLayoutEffect, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IAuthUserData } from '../model/types/iAuthUserData';
 import { AuthContext } from '../lib/AuthContext';
@@ -15,6 +15,7 @@ const AuthProvider = (props: AuthProdiverProps) => {
     const navigate = useNavigate();
     const [authUserData, setAuthUserData] = useState<null | IAuthUserData>(initialUserData || null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const timeout = useRef<ReturnType<typeof setTimeout>>();
 
     const defaultProps = useMemo(
         () => ({
@@ -25,6 +26,29 @@ const AuthProvider = (props: AuthProdiverProps) => {
         }),
         [authUserData, setAuthUserData, isLoading, setIsLoading],
     );
+
+    useEffect(() => {
+        if (timeout.current) {
+            clearTimeout(timeout.current);
+        }
+        if (authUserData !== null) {
+            timeout.current = setTimeout(() => {
+                initAuthRequest()
+                    .then((data) => {
+                        setAuthUserData(data);
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                    });
+            }, 60000 * 15);
+        }
+
+        return () => {
+            if (timeout.current) {
+                clearTimeout(timeout.current);
+            }
+        };
+    }, [authUserData]);
 
     useLayoutEffect(() => {
         setIsLoading(true);

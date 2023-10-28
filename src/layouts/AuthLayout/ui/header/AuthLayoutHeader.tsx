@@ -1,8 +1,8 @@
 import { memo, useCallback, useMemo, useState } from 'react';
 import classNames from 'classnames';
-import Icon, { UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import Icon, { UserOutlined, LogoutOutlined, ExclamationCircleFilled, MenuOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { Avatar, Drawer, Dropdown, Menu, MenuProps, Space, Switch } from 'antd';
+import { Avatar, Drawer, Dropdown, Menu, MenuProps, Modal, Space, Switch } from 'antd';
 import { useAuth } from '@/app/providers/AuthProvider';
 import { Theme, useTheme } from '@/app/providers/ThemeProvider';
 import ImgIcon from '@/shared/assets/icons/ImgIcon';
@@ -22,6 +22,7 @@ export const AuthLayoutHeader = memo((props: AuthLayoutHeaderProps) => {
     const { logout, authUserData } = useAuth();
     const { theme, toogleTheme } = useTheme();
     const [openMenuDrawer, setOpenMenuDrawer] = useState(false);
+    const [openAvatarDropdown, setOpenAvatarDropdown] = useState(false);
     const docWidthXlMore = useDocWidthSize('xl', 'more');
 
     const onMenuDrawerClose = () => {
@@ -43,11 +44,24 @@ export const AuthLayoutHeader = memo((props: AuthLayoutHeaderProps) => {
         [toogleTheme],
     );
 
+    const [modal, contextHolder] = Modal.useModal();
+
     const avatarDropDownMenu: MenuProps['items'] = useMemo(
         () => [
             {
                 key: '1',
-                label: <Link to="/profile">Редактировать профиль</Link>,
+                label: (
+                    <Link
+                        to="/profile"
+                        onClick={() => {
+                            setTimeout(() => {
+                                setOpenAvatarDropdown(false);
+                            }, 0);
+                        }}
+                    >
+                        Редактировать профиль
+                    </Link>
+                ),
                 icon: <UserOutlined />,
             },
             {
@@ -58,7 +72,14 @@ export const AuthLayoutHeader = memo((props: AuthLayoutHeaderProps) => {
                         href="/"
                         onClick={(e) => {
                             e.preventDefault();
-                            logout();
+                            setOpenAvatarDropdown(false);
+                            modal.confirm({
+                                title: 'Вы действительно хотите выйти?',
+                                icon: <ExclamationCircleFilled />,
+                                onOk() {
+                                    logout();
+                                },
+                            });
                         }}
                     >
                         Выход
@@ -67,7 +88,7 @@ export const AuthLayoutHeader = memo((props: AuthLayoutHeaderProps) => {
                 icon: <LogoutOutlined />,
             },
         ],
-        [logout],
+        [logout, modal],
     );
 
     return (
@@ -80,7 +101,10 @@ export const AuthLayoutHeader = memo((props: AuthLayoutHeaderProps) => {
                                 setOpenMenuDrawer(true);
                             }}
                         >
-                            Меню
+                            <MenuOutlined
+                                alt="Меню"
+                                className="icon"
+                            />
                         </span>
                     )}
                     <Drawer
@@ -106,19 +130,18 @@ export const AuthLayoutHeader = memo((props: AuthLayoutHeaderProps) => {
                 <div className="userData">
                     <Space size="middle">
                         <div className="hello">Привет, {authUserData?.user.firstName}!</div>
-                        <div>
+                        <div className="avatarBlock">
                             <Dropdown
                                 placement="bottomRight"
-                                arrow={{ pointAtCenter: true }}
+                                onOpenChange={setOpenAvatarDropdown}
+                                open={openAvatarDropdown}
                                 menu={{
                                     items: avatarDropDownMenu,
                                 }}
                             >
-                                <Link to="/">
-                                    <Avatar style={{ backgroundColor: 'var(--bg-active-second-color)' }}>
-                                        {authUserData?.user.firstName.slice(0, 1)}
-                                    </Avatar>
-                                </Link>
+                                <span className="avatarWrapper">
+                                    <Avatar className="avatar">{authUserData?.user.firstName.slice(0, 1)}</Avatar>
+                                </span>
                             </Dropdown>
                         </div>
                         <div className="themeSwitcher">
@@ -136,6 +159,7 @@ export const AuthLayoutHeader = memo((props: AuthLayoutHeaderProps) => {
                     </Space>
                 </div>
             </div>
+            {contextHolder}
         </header>
     );
 });

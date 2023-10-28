@@ -1,17 +1,21 @@
 import classNames from 'classnames';
-import { ReactNode, useCallback } from 'react';
+import { ReactNode, useCallback, useEffect } from 'react';
 import { MenuProps } from 'antd/lib';
-import { UserOutlined, LogoutOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { UserOutlined, LogoutOutlined, UsergroupAddOutlined, HomeOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import { Breadcrumb } from 'antd';
 import { useAuth } from '@/app/providers/AuthProvider';
 import { useTheme } from '@/app/providers/ThemeProvider';
 import { AuthLayoutHeader } from '../header/AuthLayoutHeader';
 import { AuthLayoutAside } from '../aside/AuthLayoutAside';
 import { useDocWidthSize } from '@/shared/lib/hooks/useDocWidthSize/useDocWidthSize';
+import { breadcrumb } from '../../model/types/types';
 
 interface AuthLayoutProps {
     className?: string;
     children: ReactNode;
+    breadcrumb?: breadcrumb[] | false;
+    title?: string | false;
 }
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -76,7 +80,7 @@ const menuItems: MenuProps['items'] = [
 ];
 
 export const AuthLayout = (props: AuthLayoutProps) => {
-    const { className, children } = props;
+    const { className, children, breadcrumb, title } = props;
 
     const { logout, authUserData } = useAuth();
     const { theme, toogleTheme } = useTheme();
@@ -117,6 +121,21 @@ export const AuthLayout = (props: AuthLayoutProps) => {
         console.log('click ', e);
     }, []);
 
+    const mainTitle = 'Панель управления';
+
+    useEffect(() => {
+        const titles: string[] = [];
+        if (title) {
+            titles.push(title);
+        } else if (title !== false && breadcrumb) {
+            breadcrumb.reverse().forEach((item) => {
+                titles.push(item.title);
+            });
+        }
+        titles.push(mainTitle);
+        document.title = titles.join(' / ');
+    }, [breadcrumb, title]);
+
     return (
         <div className={classNames('authLayout', [className])}>
             <AuthLayoutHeader
@@ -131,7 +150,34 @@ export const AuthLayout = (props: AuthLayoutProps) => {
                     />
                 )}
                 <main>
-                    <div>{children}</div>
+                    <div>
+                        {breadcrumb !== false && (
+                            <Breadcrumb
+                                className="breadcrumb"
+                                items={[
+                                    {
+                                        title: (
+                                            <Link to="/">
+                                                <HomeOutlined />
+                                            </Link>
+                                        ),
+                                    },
+                                    ...(breadcrumb
+                                        ? [
+                                              ...breadcrumb.map((item) => ({
+                                                  title: item.link ? (
+                                                      <Link to={item.link}>{item.title}</Link>
+                                                  ) : (
+                                                      item.title
+                                                  ),
+                                              })),
+                                          ]
+                                        : []),
+                                ]}
+                            />
+                        )}
+                        <div className="mainContent">{children}</div>
+                    </div>
                 </main>
             </div>
         </div>

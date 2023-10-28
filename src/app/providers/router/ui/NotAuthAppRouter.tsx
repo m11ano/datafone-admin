@@ -5,13 +5,13 @@ import { NotAuthLayout } from '@/layouts/NotAuthLayout';
 
 const NotAuthAppRouter = () => (
     <Routes>
-        {notAuthConfig.map(({ element, path }) => (
+        {notAuthConfig.map(({ element, path, title }) => (
             <Route
                 key={path}
                 path={path}
                 element={
                     <Suspense fallback="">
-                        <NotAuthLayout>
+                        <NotAuthLayout title={title}>
                             <div>{element}</div>
                         </NotAuthLayout>
                     </Suspense>

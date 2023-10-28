@@ -1,28 +1,47 @@
-@header-height: 62px;
+@header-height: 61px;
 
 .authLayout {
     > header {
         background-color: var(--bg-smooth-color);
         border-bottom: 1px solid var(--main-smooth-color);
-        height: @header-height;
         overflow: hidden;
         transition: background-color 0.2s;
+
+        .width-size-xl-more({
+            height: @header-height;
+        });
 
         > div {
             display: flex;
             align-items: center;
-            .std-wrapper(15px, 15px, 10px, 10px);
+            .std-wrapper(10px, 10px, 5px, 5px);
 
             > .menu {
+                padding: 0 @std-x-padding 0 0;
+
+                > span {
+                    cursor: pointer;
+
+                    > .icon {
+                        font-size: 24px;
+                    }
+                }
+
                 .width-size-xl-more({
                     display: none;
+                });
+
+                .width-size-sm-less({
+                    padding: 0 @std-x-padding-sm 0 0;
                 });
             }
 
             > .logo {
-                flex-basis: 200px;
+                padding: 0 30px 0 0;
+                line-height: 1;
+
                 .width-size-md-less({
-                    flex-basis: auto;
+                    
                 });
             }
 
@@ -33,8 +52,24 @@
                     font-size: 14px;
 
                     .width-size-lg-less({
-                    display: none;
-                });
+                        display: none;
+                    });
+                }
+
+                .avatarBlock {
+                    .avatarWrapper {
+                        display: inline-block;
+                        cursor: pointer;
+                        border: 2px solid var(--bg-active-color);
+                        height: 40px;
+                        padding: 2px;
+                        font-size: 0;
+                        border-radius: 100%;
+
+                        .avatar {
+                            background: var(--bg-active-second-color);
+                        }
+                    }
                 }
 
                 .themeSwitcher {
@@ -46,7 +81,10 @@
 
     > .content {
         display: flex;
-        min-height: calc(100dvh - @header-height);
+
+        .width-size-xl-more({
+            min-height: calc(100dvh - @header-height);
+        });
 
         > aside {
             background-color: var(--bg-smooth-color);
@@ -63,6 +101,10 @@
             > div {
                 max-width: 1620px;
                 .std-wrapper(15px, 15px, 15px, 15px);
+
+                > .breadcrumb {
+                    margin: 0 0 15px;
+                }
             }
         }
     }

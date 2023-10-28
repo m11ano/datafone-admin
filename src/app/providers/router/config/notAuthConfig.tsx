@@ -3,14 +3,18 @@ import { Navigate } from 'react-router-dom';
 import { LoginPage } from '@/pages/LoginPage';
 import { RecoverPasswordPage } from '@/pages/RecoverPasswordPage';
 
-export const notAuthConfig: RouteProps[] = [
+type routerItem = RouteProps & { title?: string };
+
+export const notAuthConfig: routerItem[] = [
     {
         path: '/',
         element: <LoginPage />,
+        title: 'Вход',
     },
     {
         path: '/recover-password',
         element: <RecoverPasswordPage />,
+        title: 'Восстановление пароля',
     },
     {
         path: '*',

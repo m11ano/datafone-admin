@@ -11,7 +11,12 @@ const AuthAppRouter = () => (
                 path={route.path}
                 element={
                     <Suspense fallback="">
-                        <AuthLayout>{route.element}</AuthLayout>
+                        <AuthLayout
+                            breadcrumb={route.breadcrumb}
+                            title={route.title}
+                        >
+                            {route.element}
+                        </AuthLayout>
                     </Suspense>
                 }
             />
