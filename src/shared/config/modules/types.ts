@@ -5,7 +5,7 @@ export interface MenuItem {
     key: string;
     icon?: React.ReactNode;
     children?: MenuItem[];
-    type?: 'group';
+    type?: 'group' | 'divider';
 }
 
 export interface ModuleParams {

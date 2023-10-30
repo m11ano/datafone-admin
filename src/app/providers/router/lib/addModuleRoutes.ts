@@ -16,7 +16,6 @@ const addModuleRoutes = (
             path: `/${type === 'client' ? 'module/' : ''}${moduleName}${item.route.path}`,
             breadcrumb:
                 item.route.breadcrumb !== false ? [...(prevBreadcrumb || []), ...(item.route.breadcrumb || [])] : false,
-            // selectedMenu: item.route.selectedMenu && `${type}_${moduleName}_${item.route.selectedMenu}`,
         };
 
         if (item.route.selectedMenu) {

@@ -8,7 +8,6 @@ import { AuthLayoutAside } from '../aside/AuthLayoutAside';
 import { useDocWidthSize } from '@/shared/lib/hooks/useDocWidthSize/useDocWidthSize';
 import { BreadcrumbItem } from '@/shared/config/router/types';
 import clientModules from '@/shared/config/modules/clientModules';
-import { getMenuItem } from '@/shared/config/modules/lib/getMenuItem';
 import coreModules from '@/shared/config/modules/coreModules';
 import { checkModuleUserRights } from '@/shared/config/modules/lib/checkModuleUserRights';
 import { useAuth } from '@/app/providers/AuthProvider';
@@ -44,7 +43,20 @@ export const AuthLayout = (props: AuthLayoutProps) => {
         });
 
         if (coreModulesMenu.length > 0) {
-            menu = [...menu, getMenuItem('Система', 'system', null, [...coreModulesMenu], 'group')];
+            menu = [
+                ...menu,
+                {
+                    label: 'Система',
+                    key: 'system',
+                    children: [...coreModulesMenu],
+                    type: 'group',
+                },
+                {
+                    label: '',
+                    key: '',
+                    type: 'divider',
+                },
+            ];
         }
 
         let clientModulesMenu: MenuItem[] = [];
@@ -59,7 +71,15 @@ export const AuthLayout = (props: AuthLayoutProps) => {
         });
 
         if (clientModulesMenu.length > 0) {
-            menu = [...menu, getMenuItem('Модули', 'modules', null, [...clientModulesMenu], 'group')];
+            menu = [
+                ...menu,
+                {
+                    label: 'Модули',
+                    key: 'modules',
+                    children: [...clientModulesMenu],
+                    type: 'group',
+                },
+            ];
         }
 
         return menu;
@@ -96,7 +116,8 @@ export const AuthLayout = (props: AuthLayoutProps) => {
         if (title) {
             titles.push(title);
         } else if (title !== false && breadcrumb) {
-            breadcrumb.reverse().forEach((item) => {
+            const breadcrumbReversed = [...breadcrumb].reverse();
+            breadcrumbReversed.forEach((item) => {
                 titles.push(item.title);
             });
         }
