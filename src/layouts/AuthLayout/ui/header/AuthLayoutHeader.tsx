@@ -9,15 +9,16 @@ import ImgIcon from '@/shared/assets/icons/ImgIcon';
 import SunPng from '@/shared/assets/icons/files/icon-sun-40x40.png';
 import MoonPng from '@/shared/assets/icons/files/icon-moon-40x40.png';
 import { useDocWidthSize } from '@/shared/lib/hooks/useDocWidthSize/useDocWidthSize';
+import { MenuItem } from '@/shared/config/modules/types';
 
 interface AuthLayoutHeaderProps {
-    menuItems: MenuProps['items'];
-    onClickMenu: MenuProps['onClick'];
+    menuItems: MenuItem[];
     className?: string;
+    selectedMenu?: string;
 }
 
 export const AuthLayoutHeader = memo((props: AuthLayoutHeaderProps) => {
-    const { className, menuItems, onClickMenu } = props;
+    const { className, menuItems, selectedMenu } = props;
 
     const { logout, authUserData } = useAuth();
     const { theme, toogleTheme } = useTheme();
@@ -29,13 +30,9 @@ export const AuthLayoutHeader = memo((props: AuthLayoutHeaderProps) => {
         setOpenMenuDrawer(false);
     };
 
-    const onClickMenuWrapped = useCallback(
-        (e: any) => {
-            onClickMenu?.(e);
-            setOpenMenuDrawer(false);
-        },
-        [onClickMenu],
-    );
+    const onClickMenuWrapped = useCallback((e: any) => {
+        setOpenMenuDrawer(false);
+    }, []);
 
     const onThemeSwitcherChange = useCallback(
         (v: boolean) => {
@@ -52,7 +49,7 @@ export const AuthLayoutHeader = memo((props: AuthLayoutHeaderProps) => {
                 key: '1',
                 label: (
                     <Link
-                        to="/profile"
+                        to="/myProfile"
                         onClick={() => {
                             setTimeout(() => {
                                 setOpenAvatarDropdown(false);
@@ -117,8 +114,7 @@ export const AuthLayoutHeader = memo((props: AuthLayoutHeaderProps) => {
                         <Menu
                             onClick={onClickMenuWrapped}
                             style={{ width: '100%' }}
-                            defaultSelectedKeys={['1']}
-                            defaultOpenKeys={['sub1']}
+                            selectedKeys={selectedMenu ? [selectedMenu] : []}
                             mode="inline"
                             items={menuItems}
                         />

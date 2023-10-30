@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import { Spin } from 'antd';
 import cls from './FullPageLoader.module.less';
+import { Loader } from '../Loader/Loader';
 
 interface FullPageLoaderProps {
     className?: string;
@@ -11,13 +11,7 @@ export const FullPageLoader = (props: FullPageLoaderProps) => {
 
     return (
         <div className={classNames(cls.fullPageLoader, [className])}>
-            <div className={cls.spinWrap}>
-                <Spin
-                    size="large"
-                    className={cls.spin}
-                />
-                <div className={cls.tip}>Загрузка...</div>
-            </div>
+            <Loader />
         </div>
     );
 };

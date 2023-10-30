@@ -1,27 +1,52 @@
-import { type RouteProps } from 'react-router-dom';
 import { MainPage } from '@/pages/MainPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
-import { breadcrumb } from '@/layouts/AuthLayout';
-import { ProfilePage } from '@/pages/ProfilePage';
+import coreModules from '@/shared/config/modules/coreModules';
+import clientModules from '@/shared/config/modules/clientModules';
+import { buildModuleRoutes } from '../lib/addModuleRoutes';
+import { AuthConfigListItem } from '../model/types/types';
 
-type routerItem = RouteProps & { breadcrumb?: breadcrumb[] | false } & { title?: string | false };
-
-export const authConfig: routerItem[] = [
+const authConfig: AuthConfigListItem[] = [
     {
-        path: '/',
-        element: <MainPage />,
-        breadcrumb: [{ title: 'Панель управления' }],
-        title: false,
-    },
-    {
-        path: '/profile',
-        element: <ProfilePage />,
-        breadcrumb: [{ title: 'Мой профиль' }],
-    },
-    {
-        path: '*',
-        element: <NotFoundPage />,
-        breadcrumb: false,
-        title: 'Страница не найдена',
+        type: 'simple',
+        routes: [
+            {
+                path: '/',
+                element: <MainPage />,
+                breadcrumb: [{ title: 'Панель управления' }],
+                title: false,
+            },
+        ],
     },
 ];
+
+Object.entries(coreModules).forEach(([moduleName, module]) => {
+    const moduleRoutes = buildModuleRoutes('core', moduleName, module);
+    authConfig.push({
+        type: 'module',
+        routes: moduleRoutes,
+        module,
+    });
+});
+
+Object.entries(clientModules).forEach(([moduleName, module]) => {
+    const moduleRoutes = buildModuleRoutes('client', moduleName, module);
+    authConfig.push({
+        type: 'module',
+        routes: moduleRoutes,
+        module,
+    });
+});
+
+authConfig.push({
+    type: 'simple',
+    routes: [
+        {
+            path: '*',
+            element: <NotFoundPage />,
+            breadcrumb: false,
+            title: 'Страница не найдена',
+        },
+    ],
+});
+
+export { authConfig };

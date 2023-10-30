@@ -1,25 +1,23 @@
 import classNames from 'classnames';
 import { Menu } from 'antd';
-import { MenuProps } from 'antd/lib';
 import { memo } from 'react';
+import { MenuItem } from '@/shared/config/modules/types';
 
 interface AuthLayoutAsideProps {
-    menuItems: MenuProps['items'];
-    onClickMenu: MenuProps['onClick'];
+    menuItems: MenuItem[];
     className?: string;
+    selectedMenu?: string;
 }
 
 export const AuthLayoutAside = memo((props: AuthLayoutAsideProps) => {
-    const { className, menuItems, onClickMenu } = props;
+    const { className, menuItems, selectedMenu } = props;
 
     return (
         <aside className={classNames(className)}>
             <div className="siderbarMenu">
                 <Menu
-                    onClick={onClickMenu}
                     style={{ width: '100%' }}
-                    defaultSelectedKeys={['1']}
-                    defaultOpenKeys={['sub1']}
+                    selectedKeys={selectedMenu ? [selectedMenu] : []}
                     mode="inline"
                     items={menuItems}
                 />

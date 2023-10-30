@@ -1,6 +1,6 @@
 import { Suspense, memo } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { notAuthConfig } from '../config/notAuthConfig';
+import { notAuthConfig } from '@/app/providers/router/config/notAuthConfig';
 import { NotAuthLayout } from '@/layouts/NotAuthLayout';
 
 const NotAuthAppRouter = () => (
@@ -10,11 +10,11 @@ const NotAuthAppRouter = () => (
                 key={path}
                 path={path}
                 element={
-                    <Suspense fallback="">
-                        <NotAuthLayout title={title}>
+                    <NotAuthLayout title={title}>
+                        <Suspense fallback="">
                             <div>{element}</div>
-                        </NotAuthLayout>
-                    </Suspense>
+                        </Suspense>
+                    </NotAuthLayout>
                 }
             />
         ))}

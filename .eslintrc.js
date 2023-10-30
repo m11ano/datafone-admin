@@ -46,6 +46,7 @@ module.exports = {
         'no-undef': 'off',
         'no-useless-catch': 'off',
         // 'm1l/path-checker': 'error',
+        'no-restricted-syntax': 'warn',
         'unused-imports/no-unused-imports': 'error',
         'unused-imports/no-unused-vars': [
             'warn',
