@@ -11,6 +11,8 @@
         "moduleResolution": "node",
         "baseUrl": ".",
         "paths": {
+            "@module/*": ["./src/modules/client/*"],
+            "@core/*": ["./src/modules/core/*"],
             "@/*": ["./src/*"]
         },
         "isolatedModules": true,

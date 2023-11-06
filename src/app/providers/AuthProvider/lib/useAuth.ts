@@ -4,12 +4,14 @@ import { IAuthUserData } from '../model/types/iAuthUserData';
 import { ILoginRequest } from '../model/types/iLoginRequest';
 import { loginRequest } from '../api/loginRequest';
 import { logoutRequest } from '../api/logoutRequest';
+import { initAuthRequest } from '../api/initAuthRequest';
 
 interface IUseAuth {
     authUserData: null | IAuthUserData;
     isLoading: boolean;
     login: (data: ILoginRequest) => void;
     logout: () => void;
+    updateAuthData: () => void;
 }
 
 export function useAuth(): IUseAuth {
@@ -47,10 +49,26 @@ export function useAuth(): IUseAuth {
         [setAuthUserData, setIsLoading],
     );
 
+    const updateAuthData = useCallback(
+        (): Promise<void> =>
+            new Promise((resolve, reject) => {
+                initAuthRequest()
+                    .then((data) => {
+                        setAuthUserData?.(data);
+                        resolve();
+                    })
+                    .catch((e) => {
+                        reject(e);
+                    });
+            }),
+        [setAuthUserData],
+    );
+
     return {
         authUserData,
         isLoading,
         login,
         logout,
+        updateAuthData,
     };
 }

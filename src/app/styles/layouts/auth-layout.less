@@ -106,10 +106,19 @@
 
             > div {
                 max-width: 1620px;
-                .std-wrapper(15px, 15px, 15px, 15px);
 
                 > .breadcrumb {
-                    margin: 0 0 15px;
+                    background-color: var(--bg-smooth-dark-color);
+                    .std-wrapper(15px, 15px, 15px, 15px);
+                }
+
+                > .mainContent {
+                    font-size: 16px;
+                    .std-wrapper(15px, 15px, 15px, 15px);
+
+                    .width-size-md-less({
+                        font-size:14px;
+                    });
                 }
             }
         }

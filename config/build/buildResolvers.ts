@@ -9,8 +9,10 @@ export function buildResolvers(options: BuildOptions): webpack.ResolveOptions {
         modules: [options.paths.src, 'node_modules'],
         mainFiles: ['index'],
         alias: {
+            '~includes.less': path.resolve(options.paths.src, 'app/styles/includes/index.less'),
+            '@module': path.resolve(options.paths.src, 'modules/client'),
+            '@core': path.resolve(options.paths.src, 'modules/core'),
             '@': options.paths.src,
-            '~includes.less': path.resolve(options.paths.src, 'app/styles/includes/index.less')
         },
     };
 }

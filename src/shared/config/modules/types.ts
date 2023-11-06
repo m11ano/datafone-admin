@@ -11,7 +11,7 @@ export interface MenuItem {
 export interface ModuleParams {
     name: string;
     title: string;
-    routes: RouterModuleItem[];
+    routes?: RouterModuleItem[];
     defaultBreadcrumb?: BreadcrumbItem[];
     checkUserRights?: string[];
     menu?: MenuItem[];

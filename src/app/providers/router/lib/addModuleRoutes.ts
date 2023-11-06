@@ -46,13 +46,15 @@ export const buildModuleRoutes = (
     module: ModulesListItem,
 ): RouterItem[] => {
     const result: RouterItem[] = [];
-    addModuleRoutes(
-        type,
-        result,
-        moduleName,
-        module,
-        module.params.routes,
-        module.params.defaultBreadcrumb || [{ title: module.params.title }],
-    );
+    if (module.params.routes) {
+        addModuleRoutes(
+            type,
+            result,
+            moduleName,
+            module,
+            module.params.routes,
+            module.params.defaultBreadcrumb || [{ title: module.params.title }],
+        );
+    }
     return result;
 };

@@ -136,7 +136,12 @@ export const AuthLayoutHeader = memo((props: AuthLayoutHeaderProps) => {
                                 }}
                             >
                                 <span className="avatarWrapper">
-                                    <Avatar className="avatar">{authUserData?.user.firstName.slice(0, 1)}</Avatar>
+                                    <Avatar
+                                        className="avatar"
+                                        src={authUserData?.user.avatarThumb100 && authUserData?.user.avatarThumb100.way}
+                                    >
+                                        {authUserData?.user.firstName.slice(0, 1)}
+                                    </Avatar>
                                 </span>
                             </Dropdown>
                         </div>

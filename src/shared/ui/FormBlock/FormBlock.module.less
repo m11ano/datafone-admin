@@ -1,0 +1,70 @@
+@import '~includes.less';
+
+.formBlock {
+}
+
+.buttonsWrapper {
+    padding-bottom: 20px;
+}
+
+.buttons {
+    background-color: var(--bg-smooth-color);
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .width-size-sm-less({
+        display: block;
+
+        .buttonsRight {
+            margin-top:15px;
+        }
+    });
+}
+
+.buttonsOnFixed {
+    width: 100%;
+    box-shadow: 0 0 7px rgb(0 0 0 / 30%);
+    // border-radius: 0 0 13px 13px;
+    // overflow: hidden;
+}
+
+.buttonsFixed {
+    .width-size-sm-less({
+        position: static !important;
+    });
+}
+
+.buttonReturnToList {
+    font-size: 16px;
+}
+
+.error {
+    margin-bottom: 20px;
+}
+
+.content {
+}
+
+.formBlockItem {
+    padding: 20px 15px;
+
+    &:nth-child(even) {
+        background: var(--bg-nth-color);
+    }
+
+    &:first-child {
+        // padding-top: 0;
+    }
+}
+
+.formBlockItemSub,
+.formBlockItemAfter {
+    max-width: 800px;
+    margin: 0 auto !important;
+}
+
+.formBlockItemAfter {
+    padding-top: 5px;
+}
