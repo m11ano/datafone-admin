@@ -51,11 +51,10 @@ export const UploadSingleImage = (props: UploadSingleImageProps) => {
             </Upload>
             <Modal
                 width={1000}
-                // bodyStyle={{ width: '80%' }}
                 open={previewOpen}
                 footer={null}
                 onCancel={handleCancel}
-                bodyStyle={{ textAlign: 'center' }}
+                styles={{ body: { textAlign: 'center' } }}
             >
                 <img
                     alt=""

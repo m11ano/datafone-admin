@@ -1,6 +1,8 @@
+import { lazy } from 'react';
 import { ModuleParams } from '@/shared/config/modules/types';
-import { MyProfilePage } from './pages/MyProfilePage';
-import { MyProfileAccessPage } from './pages/MyProfileAccessPage';
+
+const MyProfilePage = lazy(() => import('./pages/MyProfilePage'));
+const MyProfileAccessPage = lazy(() => import('./pages/MyProfileAccessPage'));
 
 const routerConfig: ModuleParams['routes'] = [
     {

@@ -1,14 +1,14 @@
 import classNames from 'classnames';
 import { memo } from 'react';
-import { MyProfileMenu } from '@core/myProfile/widgets/MyProfileMenu';
-import { EditUserData } from '@core/myProfile/features/EditUserData';
+import { MyProfileMenu } from '../../../widgets/MyProfileMenu';
+import { EditUserData } from '../../../features/EditUserData';
 import cls from './MyProfilePage.module.less';
 
 interface MyProfilePageProps {
     className?: string;
 }
 
-const MyProfilePage = memo((props: MyProfilePageProps) => {
+export const MyProfilePage = memo((props: MyProfilePageProps) => {
     const { className } = props;
 
     return (
@@ -18,5 +18,3 @@ const MyProfilePage = memo((props: MyProfilePageProps) => {
         </div>
     );
 });
-
-export default MyProfilePage;

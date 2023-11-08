@@ -20,6 +20,7 @@ export default (env: BuildEnv) => {
     const apiUrl = env.API_URL || process.env.API_URL || 'http://127.0.0.1:5000/api';
     const urlPrefix = process.env.URL_PREFIX || '/';
     const recaptchaV2Public = process.env.RECAPTCHA_V2_PUBLIC || '/';
+    const limitFileSizeMb = Number(process.env.LIMIT_FILESIZE_MB) || 1;
 
     const config: webpack.Configuration = buildWebpackConfig({
         mode,
@@ -30,6 +31,7 @@ export default (env: BuildEnv) => {
         urlPrefix,
         recaptchaV2Public,
         project: 'frontend',
+        limitFileSizeMb,
     });
 
     return config;

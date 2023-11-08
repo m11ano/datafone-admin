@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import { memo, useCallback } from 'react';
-import { Input } from 'antd';
+import { memo, useCallback, useState } from 'react';
+import { FormInstance, Input } from 'antd';
 import { UploadFile } from 'antd/lib';
 
 import cls from './EditUserData.module.less';
@@ -21,12 +21,8 @@ interface SaveData {
     avatar: UploadFile[];
 }
 
-export const EditUserData = memo((props: EditUserDataProps) => {
-    const { className } = props;
-
-    const { authUserData, updateAuthData } = useAuth();
-
-    const avatar: UploadFile | null = authUserData?.user.avatarOriginal?.id
+const makeAvatarUploadObject = (authUserData: any): UploadFile | null =>
+    authUserData?.user.avatarOriginal?.id
         ? {
               uid: authUserData?.user.avatarOriginal?.id.toString(),
               name: authUserData?.user.avatarOriginal.originalFilename!,
@@ -35,6 +31,15 @@ export const EditUserData = memo((props: EditUserDataProps) => {
               thumbUrl: authUserData?.user.avatarThumb100?.way,
           }
         : null;
+
+export const EditUserData = memo((props: EditUserDataProps) => {
+    const { className } = props;
+
+    const { authUserData, updateAuthData } = useAuth();
+
+    const [formRef, setFormRef] = useState<FormInstance | null>(null);
+
+    const avatar: UploadFile | null = makeAvatarUploadObject(authUserData);
 
     const initData = {
         firstName: authUserData!.user.firstName,
@@ -60,9 +65,15 @@ export const EditUserData = memo((props: EditUserDataProps) => {
             }
 
             await saveDataRequest(saveData);
-            updateAuthData();
+            const newUserData = await updateAuthData();
+
+            if (formRef && newUserData) {
+                const avatar: UploadFile | null = makeAvatarUploadObject(newUserData);
+
+                formRef.setFieldValue('avatar', avatar ? [avatar] : []);
+            }
         },
-        [updateAuthData],
+        [updateAuthData, formRef],
     );
 
     return (
@@ -72,6 +83,7 @@ export const EditUserData = memo((props: EditUserDataProps) => {
                 onSave={onSave}
                 buttonDelete={false}
                 buttonReturnToList={false}
+                formRef={setFormRef}
             >
                 <FormBlockItem
                     label="Имя"

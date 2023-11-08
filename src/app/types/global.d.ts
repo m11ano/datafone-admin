@@ -20,6 +20,7 @@ declare const __API__: string;
 declare const __APP_URL_PREFIX__: string;
 declare const __RECAPTCHA_V2_PUBLIC__: string;
 declare const __PROJECT__: 'storybook' | 'jest' | 'frontend';
+declare const __LIMIT_FILESIZE_MB__: string;
 
 type DeepPartial<T> = T extends object
     ? {

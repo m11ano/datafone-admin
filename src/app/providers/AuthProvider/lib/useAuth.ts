@@ -11,7 +11,7 @@ interface IUseAuth {
     isLoading: boolean;
     login: (data: ILoginRequest) => void;
     logout: () => void;
-    updateAuthData: () => void;
+    updateAuthData: () => Promise<null | IAuthUserData>;
 }
 
 export function useAuth(): IUseAuth {
@@ -50,12 +50,12 @@ export function useAuth(): IUseAuth {
     );
 
     const updateAuthData = useCallback(
-        (): Promise<void> =>
+        (): Promise<IAuthUserData | null> =>
             new Promise((resolve, reject) => {
                 initAuthRequest()
                     .then((data) => {
                         setAuthUserData?.(data);
-                        resolve();
+                        resolve(data);
                     })
                     .catch((e) => {
                         reject(e);

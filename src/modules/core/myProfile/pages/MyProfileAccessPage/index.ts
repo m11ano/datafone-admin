@@ -1,5 +1,3 @@
-import { lazy } from 'react';
+import { MyProfileAccessPage } from './ui/MyProfileAccessPage';
 
-const MyProfileAccessPage = lazy(() => import('./ui/MyProfileAccessPage'));
-
-export { MyProfileAccessPage };
+export default MyProfileAccessPage;

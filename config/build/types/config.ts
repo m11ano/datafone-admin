@@ -21,5 +21,6 @@ export interface BuildOptions {
     apiUrl: string;
     urlPrefix: string;
     recaptchaV2Public: string;
+    limitFileSizeMb: number;
     project: 'storybook' | 'frontend' | 'jest';
 }

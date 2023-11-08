@@ -1,8 +1,9 @@
 import classNames from 'classnames';
-import React, { useRef, useState } from 'react';
-import { Alert, Button, Col, Form, Modal, Row, Space } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Button, Col, Form, Modal, Row, Space, UploadFile } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { Link } from 'react-router-dom';
+import { Rule } from 'antd/es/form';
 import cls from './FormBlock.module.less';
 import { FixedOnScroll } from '../FixedOnScroll/FixedOnScroll';
 import { RequestError } from '@/shared/lib/errors/RequestError';
@@ -19,6 +20,7 @@ interface FormBlockProps<T = any> extends React.ComponentProps<typeof Form> {
     returnToListUrl?: string;
     buttonDelete?: false | string;
     onDelete?: () => void;
+    formRef?: (v: FormInstance | null) => void;
 }
 
 export const FormBlock = <T,>(props: FormBlockProps<T>) => {
@@ -34,13 +36,23 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
         returnToListUrl = '',
         buttonDelete = 'Удалить',
         onDelete,
+        formRef,
         ...extra
     } = props;
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<string[]>([]);
+    const [showSaved, setShowSaved] = useState(false);
+    const showSavedTimer = useRef<ReturnType<typeof setTimeout>>();
 
     const [modal, contextHolder] = Modal.useModal();
+
+    const form = useRef<FormInstance>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        formRef?.(form.current);
+    }, [formRef]);
 
     const onFinish = async (data: T) => {
         if (isLoading) {
@@ -50,7 +62,15 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
         setErrors([]);
         setIsLoading(true);
         try {
+            if (showSavedTimer.current) {
+                clearTimeout(showSavedTimer.current);
+            }
+            setShowSaved(false);
             await onSave?.(data);
+            setShowSaved(true);
+            showSavedTimer.current = setTimeout(() => {
+                setShowSaved(false);
+            }, 5000);
         } catch (e: unknown) {
             if (e instanceof RequestError) {
                 setErrors(e.errors);
@@ -67,11 +87,31 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
         }
     };
 
-    const onFinishFailed = () => {
+    const onFinishFailed = (errors: any) => {
+        if (contentRef.current) {
+            const field = contentRef.current.querySelector(`#${errors.errorFields[0].name[0]}`);
+            if (field) {
+                const fieldBlock = field.closest('.formBlockItem');
+                if (fieldBlock) {
+                    window.scrollTo({
+                        top: fieldBlock.getBoundingClientRect().top + document.documentElement.scrollTop - 100,
+                        left: 0,
+                        behavior: 'smooth',
+                    });
+                }
+            }
+        }
         setErrors([]);
     };
 
-    const form = useRef<FormInstance>(null);
+    useEffect(
+        () => () => {
+            if (showSavedTimer.current) {
+                clearTimeout(showSavedTimer.current);
+            }
+        },
+        [],
+    );
 
     return (
         <div
@@ -146,6 +186,13 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
                     )}
                 </div>
             </FixedOnScroll>
+            {showSaved && (
+                <Alert
+                    message="Сохранено"
+                    type="success"
+                    showIcon
+                />
+            )}
             <Form
                 ref={form}
                 onFinish={onFinish}
@@ -169,7 +216,12 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
                         className={cls.error}
                     />
                 )}
-                <div className={cls.content}>{children}</div>
+                <div
+                    className={cls.content}
+                    ref={contentRef}
+                >
+                    {children}
+                </div>
             </Form>
             {contextHolder}
         </div>
@@ -179,6 +231,7 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
 interface FormBlockItemProps extends React.ComponentProps<typeof Form.Item> {
     type?: 'default' | 'fileList';
     className?: string;
+    rules?: Rule[];
     style?: React.CSSProperties;
     formClassName?: string;
     formStyle?: React.CSSProperties;
@@ -186,6 +239,7 @@ interface FormBlockItemProps extends React.ComponentProps<typeof Form.Item> {
     label?: React.ReactNode;
     example?: React.ReactNode;
     after?: React.ReactNode;
+    maxOneFileSizeMb?: number | null;
 }
 
 export const FormBlockItem = (props: FormBlockItemProps) => {
@@ -193,18 +247,20 @@ export const FormBlockItem = (props: FormBlockItemProps) => {
         type = 'default',
         className,
         children,
+        rules = [],
         style,
         formClassName,
         formStyle,
         label,
         example,
         after,
+        maxOneFileSizeMb = Number(__LIMIT_FILESIZE_MB__),
         ...extra
     } = props;
 
     return (
         <div
-            className={classNames(cls.formBlockItem, className)}
+            className={classNames(cls.formBlockItem, className, 'formBlockItem')}
             style={style}
         >
             <Form.Item
@@ -214,6 +270,32 @@ export const FormBlockItem = (props: FormBlockItemProps) => {
                 wrapperCol={label === undefined ? { offset: 0, span: 24 } : undefined}
                 tooltip={example && <>Например: {example}</>}
                 valuePropName={type === 'fileList' ? 'fileList' : undefined}
+                rules={[
+                    ...rules,
+                    ...(type === 'fileList' && maxOneFileSizeMb !== null
+                        ? [
+                              {
+                                  validator: (_: any, value: UploadFile[]) => {
+                                      let error = false;
+                                      value.every((f: UploadFile) => {
+                                          if (f.originFileObj) {
+                                              if (f.originFileObj.size > maxOneFileSizeMb * 1024 * 1024) {
+                                                  error = true;
+                                                  return false;
+                                              }
+                                          }
+                                          return true;
+                                      });
+                                      return error
+                                          ? Promise.reject(
+                                                new Error(`Файл превышает максимальный размер ${maxOneFileSizeMb}Mb`),
+                                            )
+                                          : Promise.resolve();
+                                  },
+                              },
+                          ]
+                        : []),
+                ]}
                 getValueFromEvent={
                     type === 'fileList'
                         ? (e: any) => {

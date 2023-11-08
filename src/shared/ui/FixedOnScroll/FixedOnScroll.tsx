@@ -14,26 +14,28 @@ export const FixedOnScroll = (props: FixedOnScrollProps) => {
     const { className, children, classNameWrapper, classNameOnFixed, saveMaxWidthOnScroll = false } = props;
     const wrapper = useRef<HTMLDivElement>(null);
     const block = useRef<HTMLDivElement>(null);
+    const blockWrapper = useRef<HTMLDivElement>(null);
     const [isFixed, setIsFixed] = useState(false);
 
     useEffect(() => {
         const onScroll = () => {
-            if (wrapper.current && block.current) {
+            if (wrapper.current && block.current && blockWrapper.current) {
                 wrapper.current.getBoundingClientRect();
                 if (window.scrollY > wrapper.current.getBoundingClientRect().top + window.scrollY) {
-                    setIsFixed(true);
-                    wrapper.current.style.height = `${block.current.getBoundingClientRect().height}px`;
+                    wrapper.current.style.height = `${wrapper.current.getBoundingClientRect().height}px`;
 
                     if (saveMaxWidthOnScroll) {
                         block.current.style.maxWidth = `${block.current.getBoundingClientRect().width}px`;
                     }
+
+                    setIsFixed(true);
                 } else {
-                    setIsFixed(false);
                     wrapper.current.style.height = 'auto';
 
                     if (saveMaxWidthOnScroll) {
                         block.current.style.maxWidth = 'none';
                     }
+                    setIsFixed(false);
                 }
             }
         };
@@ -51,7 +53,10 @@ export const FixedOnScroll = (props: FixedOnScrollProps) => {
             className={classNames(cls.fixedOnScroll)}
             ref={wrapper}
         >
-            <div className={classNameWrapper}>
+            <div
+                className={classNameWrapper}
+                ref={blockWrapper}
+            >
                 <div
                     className={classNames(
                         cls.block,
