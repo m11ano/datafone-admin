@@ -1,6 +1,14 @@
 import { ModulesListItem } from '@/shared/config/modules/types';
 import { BreadcrumbItem, RouterItem, RouterModuleItem } from '@/shared/config/router/types';
 
+const prepareBreadcrumb = (type: 'core' | 'client', moduleName: string, breadcrumb?: BreadcrumbItem[] | false) =>
+    breadcrumb && [
+        ...breadcrumb.map((br) => ({
+            ...br,
+            link: br.link !== undefined ? `${type === 'client' ? '/module/' : '/'}${moduleName}${br.link}` : br.link,
+        })),
+    ];
+
 const addModuleRoutes = (
     type: 'core' | 'client',
     result: RouterItem[],
@@ -11,11 +19,11 @@ const addModuleRoutes = (
     prevSelectedMenu?: string,
 ) => {
     routes.forEach((item) => {
+        const breadcrumb = prepareBreadcrumb(type, moduleName, item.route.breadcrumb);
         const routeResult: RouterItem = {
             ...item.route,
             path: `/${type === 'client' ? 'module/' : ''}${moduleName}${item.route.path}`,
-            breadcrumb:
-                item.route.breadcrumb !== false ? [...(prevBreadcrumb || []), ...(item.route.breadcrumb || [])] : false,
+            breadcrumb: breadcrumb !== false ? [...(prevBreadcrumb || []), ...(breadcrumb || [])] : false,
         };
 
         if (item.route.selectedMenu) {
@@ -53,7 +61,7 @@ export const buildModuleRoutes = (
             moduleName,
             module,
             module.params.routes,
-            module.params.defaultBreadcrumb || [{ title: module.params.title }],
+            prepareBreadcrumb(type, moduleName, module.params.defaultBreadcrumb || [{ title: module.params.title }]),
         );
     }
     return result;

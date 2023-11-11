@@ -35,15 +35,7 @@ const AuthAppRouter = () => {
                             title={route.title}
                             selectedMenu={route.selectedMenu}
                         >
-                            <Suspense
-                                fallback={
-                                    <div style={{ textAlign: 'center' }}>
-                                        <Loader />
-                                    </div>
-                                }
-                            >
-                                {route.element}
-                            </Suspense>
+                            <Suspense fallback={<Loader position="center" />}>{route.element}</Suspense>
                         </AuthLayout>
                     }
                 />

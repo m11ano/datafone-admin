@@ -31,14 +31,14 @@ export const AuthLayout = (props: AuthLayoutProps) => {
     const menuItems = useMemo(() => {
         let menu: MenuItem[] = [];
 
-        let coreModulesMenu: MenuItem[] = [];
+        const coreModulesMenu: MenuItem[] = [];
         Object.values(coreModules).forEach((module) => {
             if (module.params.menu && authUserData !== null) {
                 const rightsCheck = checkModuleUserRights(authUserData, module);
                 if (rightsCheck === false) {
                     return;
                 }
-                coreModulesMenu = [...addMenuPrefix(module.params.menu, `core_${module.params.name}_`)];
+                coreModulesMenu.push(...addMenuPrefix(module.params.menu, `core_${module.params.name}_`));
             }
         });
 
@@ -59,14 +59,14 @@ export const AuthLayout = (props: AuthLayoutProps) => {
             ];
         }
 
-        let clientModulesMenu: MenuItem[] = [];
+        const clientModulesMenu: MenuItem[] = [];
         Object.values(clientModules).forEach((module) => {
             if (module.params.menu && authUserData !== null) {
                 const rightsCheck = checkModuleUserRights(authUserData, module);
                 if (rightsCheck === false) {
                     return;
                 }
-                clientModulesMenu = [...addMenuPrefix(module.params.menu, `client_${module.params.name}_`)];
+                clientModulesMenu.push(...addMenuPrefix(module.params.menu, `client_${module.params.name}_`));
             }
         });
 
@@ -83,30 +83,6 @@ export const AuthLayout = (props: AuthLayoutProps) => {
         }
 
         return menu;
-        /*
-        return [
-            getMenuItem(
-                'Система',
-                'system',
-                null,
-                [getMenuItem('Пользователи', 'system_users', <UsergroupAddOutlined />)],
-                'group',
-            ),
-            { type: 'divider' },
-            getMenuItem(
-                'Модули',
-                'modules',
-                null,
-                [
-                    getMenuItem('Калькулятор', 'calculator', <UsergroupAddOutlined />, [
-                        getMenuItem('Option 3', '3'),
-                        getMenuItem('Option 4', '4'),
-                    ]),
-                ],
-                'group',
-            ),
-        ];
-        */
     }, [authUserData]);
 
     const mainTitle = 'Панель управления';

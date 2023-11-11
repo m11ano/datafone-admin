@@ -1,19 +1,11 @@
 import { MenuItem } from '@/shared/config/modules/types';
 
-const addMenuPrefixDo = (menu: MenuItem[], prefix: string) => {
-    menu = menu.map((item) => ({
-        ...item,
-        key: `${prefix}${item!.key}`,
-    }));
-
+const addMenuPrefixDo = (menu: MenuItem[], prefix: string, postPrefix: string = '') => {
     menu.forEach((item, index) => {
-        menu[index].children = item.children && addMenuPrefixDo(item.children, prefix);
+        const postPrefixNext = `${item!.key}_`;
+        menu[index].key = `${prefix}${postPrefix}${item!.key}`;
+        menu[index].children = item.children && addMenuPrefixDo(item.children, prefix, postPrefixNext);
     });
-    // for (const i in menu) {
-    //     if (item.children) {
-    //         item.children = addMenuPrefixDo(item.children, prefix);
-    //     }
-    // }
 
     return menu;
 };

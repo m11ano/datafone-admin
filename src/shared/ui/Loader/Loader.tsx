@@ -4,13 +4,18 @@ import cls from './Loader.module.less';
 
 interface LoaderProps {
     className?: string;
+    position?: 'left' | 'center' | 'right';
 }
 
 export const Loader = (props: LoaderProps) => {
-    const { className } = props;
+    const { className, position } = props;
 
     return (
-        <div className={classNames(cls.loader, [className])}>
+        <div
+            className={classNames(cls.loader, { [cls.block]: position, [cls[`block_${position}`]]: position }, [
+                className,
+            ])}
+        >
             <div className={cls.spinWrap}>
                 <Spin
                     size="large"

@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Button, Col, Form, Modal, Row, Space, UploadFile } from 'antd';
+import { Alert, Button, Col, Form, Modal, Row, UploadFile } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { Link } from 'react-router-dom';
 import { Rule } from 'antd/es/form';
 import cls from './FormBlock.module.less';
-import { FixedOnScroll } from '../FixedOnScroll/FixedOnScroll';
 import { RequestError } from '@/shared/lib/errors/RequestError';
+import { ButtonsPanel } from '../ButtonsPanel/ButtonsPanel';
 
 interface FormBlockProps<T = any> extends React.ComponentProps<typeof Form> {
     className?: string;
@@ -118,74 +118,60 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
             className={classNames(cls.formBlock, className)}
             style={style}
         >
-            <FixedOnScroll
+            <ButtonsPanel
                 classNameWrapper={cls.buttonsWrapper}
                 classNameOnFixed={cls.buttonsOnFixed}
                 className={cls.buttonsFixed}
-                saveMaxWidthOnScroll
-            >
-                <div className={cls.buttons}>
-                    {(buttonSave || buttonReturnToList) && (
-                        <div className={cls.buttonsLeft}>
-                            <Space
-                                wrap
-                                size={15}
-                            >
-                                {buttonSave && (
-                                    <Button
-                                        type="primary"
-                                        size="large"
-                                        className={cls.buttonSave}
-                                        loading={isLoading}
-                                        onClick={() => {
-                                            form.current?.submit();
-                                        }}
-                                    >
-                                        {buttonSave}
-                                    </Button>
-                                )}
-                                {buttonReturnToList && (
-                                    <Link
-                                        to={returnToListUrl}
-                                        className={cls.buttonReturnToList}
-                                    >
-                                        {buttonReturnToList}
-                                    </Link>
-                                )}
-                            </Space>
-                        </div>
-                    )}
-                    {buttonDelete && (
-                        <div className={cls.buttonsRight}>
-                            <Space
-                                wrap
-                                size={15}
-                            >
-                                {buttonDelete && (
-                                    <Button
-                                        type="dashed"
-                                        style={{ marginLeft: 'auto' }}
-                                        size="middle"
-                                        danger
-                                        className={cls.buttonDelete}
-                                        onClick={async () => {
-                                            const confirmed = await modal.confirm({
-                                                title: 'Внимание',
-                                                content: 'Вы действительно хотите удалить?',
-                                            });
-                                            if (confirmed) {
-                                                onDelete?.();
-                                            }
-                                        }}
-                                    >
-                                        {buttonDelete}
-                                    </Button>
-                                )}
-                            </Space>
-                        </div>
-                    )}
-                </div>
-            </FixedOnScroll>
+                left={
+                    buttonSave || buttonReturnToList ? (
+                        <>
+                            {buttonSave && (
+                                <Button
+                                    type="primary"
+                                    size="large"
+                                    className={cls.buttonSave}
+                                    loading={isLoading}
+                                    onClick={() => {
+                                        form.current?.submit();
+                                    }}
+                                >
+                                    {buttonSave}
+                                </Button>
+                            )}
+                            {buttonReturnToList && (
+                                <Link
+                                    to={returnToListUrl}
+                                    className={cls.buttonReturnToList}
+                                >
+                                    {buttonReturnToList}
+                                </Link>
+                            )}
+                        </>
+                    ) : null
+                }
+                right={
+                    buttonDelete ? (
+                        <Button
+                            type="dashed"
+                            style={{ marginLeft: 'auto' }}
+                            size="middle"
+                            danger
+                            className={cls.buttonDelete}
+                            onClick={async () => {
+                                const confirmed = await modal.confirm({
+                                    title: 'Внимание',
+                                    content: 'Вы действительно хотите удалить?',
+                                });
+                                if (confirmed) {
+                                    onDelete?.();
+                                }
+                            }}
+                        >
+                            {buttonDelete}
+                        </Button>
+                    ) : null
+                }
+            />
             {showSaved && (
                 <Alert
                     message="Сохранено"
