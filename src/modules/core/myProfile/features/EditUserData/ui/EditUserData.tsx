@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useRef } from 'react';
 import { FormInstance, Input } from 'antd';
 import { UploadFile } from 'antd/lib';
 
@@ -37,7 +37,8 @@ export const EditUserData = memo((props: EditUserDataProps) => {
 
     const { authUserData, updateAuthData } = useAuth();
 
-    const [formRef, setFormRef] = useState<FormInstance | null>(null);
+    // const [formRef, setFormRef] = useState<FormInstance | null>(null);
+    const formRef = useRef<FormInstance>(null);
 
     const avatar: UploadFile | null = makeAvatarUploadObject(authUserData);
 
@@ -70,7 +71,7 @@ export const EditUserData = memo((props: EditUserDataProps) => {
             if (formRef && newUserData) {
                 const avatar: UploadFile | null = makeAvatarUploadObject(newUserData);
 
-                formRef.setFieldValue('avatar', avatar ? [avatar] : []);
+                formRef.current?.setFieldValue('avatar', avatar ? [avatar] : []);
             }
         },
         [updateAuthData, formRef],
@@ -83,7 +84,7 @@ export const EditUserData = memo((props: EditUserDataProps) => {
                 onSave={onSave}
                 buttonDelete={false}
                 buttonReturnToList={false}
-                formRef={setFormRef}
+                formRef={formRef}
             >
                 <FormBlockItem
                     label="Имя"

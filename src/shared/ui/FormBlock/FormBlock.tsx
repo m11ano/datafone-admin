@@ -4,23 +4,26 @@ import { Alert, Button, Col, Form, Modal, Row, UploadFile } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { Link } from 'react-router-dom';
 import { Rule } from 'antd/es/form';
+import { SaveOutlined, DeleteOutlined } from '@ant-design/icons';
 import cls from './FormBlock.module.less';
 import { RequestError } from '@/shared/lib/errors/RequestError';
 import { ButtonsPanel } from '../ButtonsPanel/ButtonsPanel';
+import { Loader } from '../Loader/Loader';
 
-interface FormBlockProps<T = any> extends React.ComponentProps<typeof Form> {
+export interface FormBlockProps<T = any> extends React.ComponentProps<typeof Form> {
     className?: string;
     style?: React.CSSProperties;
     children: React.ReactNode;
     formClassName?: string;
     formStyle?: React.CSSProperties;
     buttonSave?: false | string;
-    onSave?: (data: T) => void;
+    onSave?: (values: T) => void;
     buttonReturnToList?: false | string;
     returnToListUrl?: string;
     buttonDelete?: false | string;
     onDelete?: () => void;
-    formRef?: (v: FormInstance | null) => void;
+    status?: 'show' | 'loading' | 'hide';
+    formRef?: React.RefObject<FormInstance<any>>;
 }
 
 export const FormBlock = <T,>(props: FormBlockProps<T>) => {
@@ -36,6 +39,7 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
         returnToListUrl = '',
         buttonDelete = 'Удалить',
         onDelete,
+        status = 'show',
         formRef,
         ...extra
     } = props;
@@ -49,10 +53,6 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
 
     const form = useRef<FormInstance>(null);
     const contentRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        formRef?.(form.current);
-    }, [formRef]);
 
     const onFinish = async (data: T) => {
         if (isLoading) {
@@ -104,6 +104,10 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
         setErrors([]);
     };
 
+    useEffect(() => {
+        console.log('FIRST INIT');
+    }, []);
+
     useEffect(
         () => () => {
             if (showSavedTimer.current) {
@@ -131,8 +135,9 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
                                     size="large"
                                     className={cls.buttonSave}
                                     loading={isLoading}
+                                    icon={<SaveOutlined />}
                                     onClick={() => {
-                                        form.current?.submit();
+                                        formRef?.current?.submit();
                                     }}
                                 >
                                     {buttonSave}
@@ -156,6 +161,7 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
                             style={{ marginLeft: 'auto' }}
                             size="middle"
                             danger
+                            icon={<DeleteOutlined />}
                             className={cls.buttonDelete}
                             onClick={async () => {
                                 const confirmed = await modal.confirm({
@@ -180,7 +186,8 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
                 />
             )}
             <Form
-                ref={form}
+                // ref={form}
+                ref={formRef}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 labelCol={{ span: 8 }}
@@ -190,24 +197,30 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
                 size="large"
                 style={formStyle}
                 disabled={isLoading}
+                labelWrap
                 {...extra}
             >
-                {errors.length > 0 && (
-                    <Alert
-                        message={errors.map((err) => (
-                            <div key={err}>{err}</div>
-                        ))}
-                        type="error"
-                        showIcon
-                        className={cls.error}
-                    />
+                {status === 'show' && (
+                    <>
+                        {errors.length > 0 && (
+                            <Alert
+                                message={errors.map((err) => (
+                                    <div key={err}>{err}</div>
+                                ))}
+                                type="error"
+                                showIcon
+                                className={cls.error}
+                            />
+                        )}
+                        <div
+                            className={cls.content}
+                            ref={contentRef}
+                        >
+                            {children}
+                        </div>
+                    </>
                 )}
-                <div
-                    className={cls.content}
-                    ref={contentRef}
-                >
-                    {children}
-                </div>
+                {status === 'loading' && <Loader position="center" />}
             </Form>
             {contextHolder}
         </div>
@@ -310,6 +323,37 @@ export const FormBlockItem = (props: FormBlockItemProps) => {
                     </Col>
                 </Row>
             )}
+        </div>
+    );
+};
+
+interface FormBlockContentProps {
+    label?: null | React.ReactNode;
+    className?: string;
+    children?: React.ReactNode;
+}
+
+export const FormBlockContent = (props: FormBlockContentProps) => {
+    const { label, className, children } = props;
+
+    return (
+        <div className={classNames(cls.formBlockContent, className, 'formBlockContent')}>
+            <Row className={classNames(cls.formBlockContentRow)}>
+                {label !== undefined && (
+                    <Col
+                        span={0}
+                        sm={8}
+                    >
+                        {label}
+                    </Col>
+                )}
+                <Col
+                    span={24}
+                    sm={label !== undefined ? 16 : 24}
+                >
+                    {children}
+                </Col>
+            </Row>
         </div>
     );
 };

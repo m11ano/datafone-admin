@@ -4,6 +4,7 @@ import { RolesList } from '@core/users/entities/RolesList';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
 import moduleConfig from '@core/users/Users';
+import { FileAddOutlined } from '@ant-design/icons';
 import cls from './RolesPage.module.less';
 import { ButtonsPanel } from '@/shared/ui/ButtonsPanel/ButtonsPanel';
 
@@ -22,6 +23,7 @@ export const RolesPage = memo((props: RolesPageProps) => {
                         <Button
                             type="primary"
                             size="large"
+                            icon={<FileAddOutlined />}
                         >
                             Создать роль
                         </Button>

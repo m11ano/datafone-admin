@@ -6,5 +6,6 @@ export const rtkApi = createApi({
         baseUrl: __API__,
         prepareHeaders: (headers) => headers,
     }),
-    endpoints: (builder) => ({}),
+    refetchOnMountOrArgChange: true,
+    endpoints: (builder: any) => ({}),
 });

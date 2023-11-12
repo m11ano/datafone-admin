@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useRef } from 'react';
 import { Input } from 'antd';
 
 import { FormInstance } from 'antd/lib';
@@ -22,7 +22,9 @@ interface SaveAccess {
 export const EditUserAccess = memo((props: EditUserAccessProps) => {
     const { className } = props;
 
-    const [formRef, setFormRef] = useState<FormInstance | null>(null);
+    // const [formRef, setFormRef] = useState<FormInstance | null>(null);
+
+    const formRef = useRef<FormInstance>(null);
 
     const initData = {};
 
@@ -38,7 +40,7 @@ export const EditUserAccess = memo((props: EditUserAccessProps) => {
 
             await saveAccessRequest(saveData);
 
-            formRef?.resetFields();
+            formRef.current?.resetFields();
         },
         [formRef],
     );
@@ -50,7 +52,7 @@ export const EditUserAccess = memo((props: EditUserAccessProps) => {
                 onSave={onSave}
                 buttonDelete={false}
                 buttonReturnToList={false}
-                formRef={setFormRef}
+                formRef={formRef}
             >
                 <FormBlockItem
                     label="Текущий пароль"

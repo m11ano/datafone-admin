@@ -1,8 +1,11 @@
 import classNames from 'classnames';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useGetUsersRightsList, useGetUsersRolesList } from '@core/users/shared/api/usersRtkApi';
-import { Table } from 'antd';
+import { Button, Dropdown, Table } from 'antd';
 import { IUsersRole } from '@core/users/shared/types/usersRolesTypes';
+import { Link } from 'react-router-dom';
+import { EditOutlined } from '@ant-design/icons';
+import moduleConfig from '@core/users/Users';
 import cls from './RolesList.module.less';
 import { Loader } from '@/shared/ui/Loader/Loader';
 
@@ -51,7 +54,7 @@ export const RolesList = memo((props: RolesListProps) => {
                     {accessLevel === 'SYSTEM' && (
                         <>
                             <span className={cls.roleTypeSystem}>Пользователь</span>{' '}
-                            <span className={cls.roleTypeMore}>(роль по умолчанию для новых пользователей)</span>
+                            <span className={cls.roleTypeMore}>(роль по умолчанию для всех пользователей)</span>
                         </>
                     )}
                     {accessLevel === 'MANUAL' && <>Создано вручную</>}
@@ -61,17 +64,29 @@ export const RolesList = memo((props: RolesListProps) => {
         {
             title: 'Действия',
             key: 'action',
-            render: (_: any, item: DataType) => item.accessLevel === 'MANUAL' && <>JSON.stringify(item)</>,
-            // render: (_: any, item: DataType) => {
-            //     <>Геге{item}</>;
-            // },
+            render: (_: any, item: DataType) =>
+                item.accessLevel === 'MANUAL' ? (
+                    <Dropdown.Button
+                        menu={{}}
+                        icon={<EditOutlined />}
+                        onClick={(e) => {
+                            console.log(e);
+                        }}
+                    >
+                        Редактировать
+                    </Dropdown.Button>
+                ) : (
+                    <Link to={`/${moduleConfig.name}/roles/edit/${item.id}`}>
+                        <Button icon={<EditOutlined />}>Редактировать</Button>
+                    </Link>
+                ),
         },
     ];
 
     useEffect(() => {
         setInitFetch(true);
         if (initFetch === false && rolesIsFetching === false) {
-            rolesRefetch();
+            // rolesRefetch();
         }
     }, [initFetch, rolesIsFetching, rolesRefetch]);
 
@@ -83,6 +98,7 @@ export const RolesList = memo((props: RolesListProps) => {
                 <Table
                     dataSource={dataSource}
                     columns={columns}
+                    scroll={{ x: true }}
                 />
             )}
         </div>
