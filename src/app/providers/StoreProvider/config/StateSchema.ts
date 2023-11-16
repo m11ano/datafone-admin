@@ -4,12 +4,10 @@ import { rtkApi } from '@/shared/api/rtkApi';
 
 export interface StateSchema {
     // counter: CounterSchema;
-    // user: UserSchema;
     [rtkApi.reducerPath]: ReturnType<typeof rtkApi.reducer>;
 
     // // Асинхронные редюсеры
     // loginForm?: LoginSchema;
-    // profile?: ProfileSchema;
 }
 
 export type StateSchemaKey = keyof StateSchema;

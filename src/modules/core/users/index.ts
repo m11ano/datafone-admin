@@ -1,10 +1,10 @@
 import { ModuleParams } from '@/shared/config/modules/types';
-import moduleConfig from './Users';
-import routerConfig from './routerConfig';
+import { usersModuleConfig } from './users';
+import { usersRouterConfig } from './usersRouterConfig';
 
 const moduleParams: ModuleParams = {
-    routes: routerConfig,
-    ...moduleConfig,
+    routes: usersRouterConfig,
+    ...usersModuleConfig,
 };
 
 export default moduleParams;

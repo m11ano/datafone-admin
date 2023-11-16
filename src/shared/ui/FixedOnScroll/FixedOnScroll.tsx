@@ -28,12 +28,20 @@ export const FixedOnScroll = (props: FixedOnScrollProps) => {
                         block.current.style.maxWidth = `${block.current.getBoundingClientRect().width}px`;
                     }
 
+                    block.current.classList.add(cls.isFixed);
+                    if (classNameOnFixed) {
+                        block.current.classList.add(classNameOnFixed);
+                    }
                     setIsFixed(true);
                 } else {
                     wrapper.current.style.height = 'auto';
 
                     if (saveMaxWidthOnScroll) {
                         block.current.style.maxWidth = 'none';
+                    }
+                    block.current.classList.remove(cls.isFixed);
+                    if (classNameOnFixed) {
+                        block.current.classList.remove(classNameOnFixed);
                     }
                     setIsFixed(false);
                 }
@@ -46,7 +54,7 @@ export const FixedOnScroll = (props: FixedOnScrollProps) => {
         return () => {
             window.removeEventListener('scroll', onScroll);
         };
-    }, [saveMaxWidthOnScroll]);
+    }, [saveMaxWidthOnScroll, classNameOnFixed]);
 
     return (
         <div
@@ -58,12 +66,7 @@ export const FixedOnScroll = (props: FixedOnScrollProps) => {
                 ref={blockWrapper}
             >
                 <div
-                    className={classNames(
-                        cls.block,
-                        className,
-                        { [cls.isFixed]: isFixed },
-                        classNameOnFixed && { [classNameOnFixed]: isFixed },
-                    )}
+                    className={classNames(cls.block, className)}
                     ref={block}
                 >
                     {children}

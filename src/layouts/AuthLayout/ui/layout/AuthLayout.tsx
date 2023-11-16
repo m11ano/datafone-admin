@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { HomeOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { Breadcrumb } from 'antd';
+import { Breadcrumb, Modal, message } from 'antd';
 import { AuthLayoutHeader } from '../header/AuthLayoutHeader';
 import { AuthLayoutAside } from '../aside/AuthLayoutAside';
 import { useDocWidthSize } from '@/shared/lib/hooks/useDocWidthSize/useDocWidthSize';
@@ -13,6 +13,7 @@ import { checkModuleUserRights } from '@/shared/config/modules/lib/checkModuleUs
 import { useAuth } from '@/app/providers/AuthProvider';
 import { addMenuPrefix } from '../../model/lib/addMenuPrefix';
 import { MenuItem } from '@/shared/config/modules/types';
+import { LayoutContext, LayoutContextProps } from '../../lib/LayoutContext';
 
 interface AuthLayoutProps {
     className?: string;
@@ -26,6 +27,8 @@ export const AuthLayout = (props: AuthLayoutProps) => {
     const { className, children, breadcrumb, title, selectedMenu } = props;
     const { authUserData } = useAuth();
 
+    const [modal, contextHolderModal] = Modal.useModal();
+    const [messageApi, contextHolderMessage] = message.useMessage();
     const docWidthXlMore = useDocWidthSize('xl', 'more');
 
     const menuItems = useMemo(() => {
@@ -101,51 +104,65 @@ export const AuthLayout = (props: AuthLayoutProps) => {
         document.title = titles.join(' / ');
     }, [breadcrumb, title]);
 
+    const defaultLayoutContextProps = useMemo<LayoutContextProps>(
+        () => ({
+            antdHookApi: {
+                modal,
+                message: messageApi,
+            },
+        }),
+        [modal, messageApi],
+    );
+
     return (
-        <div className={classNames('authLayout', [className])}>
-            <AuthLayoutHeader
-                menuItems={menuItems}
-                selectedMenu={selectedMenu}
-            />
-            <div className="content">
-                {docWidthXlMore && (
-                    <AuthLayoutAside
-                        menuItems={menuItems}
-                        selectedMenu={selectedMenu}
-                    />
-                )}
-                <main>
-                    <div>
-                        {breadcrumb !== false && (
-                            <Breadcrumb
-                                className="breadcrumb"
-                                items={[
-                                    {
-                                        title: (
-                                            <Link to="/">
-                                                <HomeOutlined />
-                                            </Link>
-                                        ),
-                                    },
-                                    ...(breadcrumb
-                                        ? [
-                                              ...breadcrumb.map((item, index) => ({
-                                                  title:
-                                                      index < breadcrumb.length - 1 && item.link ? (
-                                                          <Link to={item.link}>{item.title}</Link>
-                                                      ) : (
-                                                          item.title
-                                                      ),
-                                              })),
-                                          ]
-                                        : []),
-                                ]}
-                            />
-                        )}
-                        <div className="mainContent">{children}</div>
-                    </div>
-                </main>
+        <LayoutContext.Provider value={defaultLayoutContextProps}>
+            <div className={classNames('authLayout', [className])}>
+                <AuthLayoutHeader
+                    menuItems={menuItems}
+                    selectedMenu={selectedMenu}
+                />
+                <div className="content">
+                    {docWidthXlMore && (
+                        <AuthLayoutAside
+                            menuItems={menuItems}
+                            selectedMenu={selectedMenu}
+                        />
+                    )}
+                    <main>
+                        <div>
+                            {breadcrumb !== false && (
+                                <Breadcrumb
+                                    className="breadcrumb"
+                                    items={[
+                                        {
+                                            title: (
+                                                <Link to="/">
+                                                    <HomeOutlined />
+                                                </Link>
+                                            ),
+                                        },
+                                        ...(breadcrumb
+                                            ? [
+                                                  ...breadcrumb.map((item, index) => ({
+                                                      title:
+                                                          index < breadcrumb.length - 1 && item.link ? (
+                                                              <Link to={item.link}>{item.title}</Link>
+                                                          ) : (
+                                                              item.title
+                                                          ),
+                                                  })),
+                                              ]
+                                            : []),
+                                    ]}
+                                />
+                            )}
+                            <div className="mainContent">{children}</div>
+                        </div>
+                    </main>
+                </div>
+                {contextHolderModal}
+                {contextHolderMessage}
             </div>
-        </div>
+        </LayoutContext.Provider>
     );
 };

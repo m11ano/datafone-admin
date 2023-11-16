@@ -5,7 +5,7 @@ import { ModuleParams } from '@/shared/config/modules/types';
 const moduleTitle = 'Пользователи';
 const moduleName = 'users';
 
-const moduleConfig: ModuleParams = {
+const usersModuleConfig: ModuleParams = {
     name: moduleName,
     title: moduleTitle,
     defaultBreadcrumb: [{ title: moduleTitle, link: '' }],
@@ -30,4 +30,4 @@ const moduleConfig: ModuleParams = {
     ],
 };
 
-export default moduleConfig;
+export { usersModuleConfig };

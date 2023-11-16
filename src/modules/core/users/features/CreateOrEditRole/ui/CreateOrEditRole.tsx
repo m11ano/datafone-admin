@@ -2,13 +2,19 @@ import classNames from 'classnames';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Input, InputNumber, Switch } from 'antd';
 import { FormInstance } from 'antd/lib';
-import { IUsersRole, IUsersRoleItemData } from '@core/users/shared/types/usersRolesTypes';
-import { useAddUsersRole, useGetUsersRightsList, useGetUsersRolesList } from '@core/users/shared/api/usersRtkApi';
-import moduleConfig from '@core/users/Users';
-import { useNavigate, Link } from 'react-router-dom';
+import {
+    useAddUsersRole,
+    useGetUsersRightsList,
+    useGetUsersRolesList,
+    useUpdateUsersRole,
+} from '@core/users/shared/api/usersRtkApi';
+import { usersModuleConfig } from '@core/users/users';
+import { useNavigate } from 'react-router-dom';
+import { IUsersRole, IUsersRoleItemData } from '../../../shared/types/usersRolesTypes';
 import cls from './CreateOrEditRole.module.less';
 import { FormBlock, FormBlockContent, FormBlockItem, FormBlockProps } from '@/shared/ui/FormBlock/FormBlock';
 import { RequestError } from '@/shared/lib/errors/RequestError';
+import { useDeleteUserRoleAction } from '../../../shared/lib/deleteUserRole';
 
 interface CreateOrEditRoleProps {
     id?: number;
@@ -25,12 +31,22 @@ export const CreateOrEditRole = memo((props: CreateOrEditRoleProps) => {
     const [role, setRole] = useState<IUsersRole | null>(null);
 
     const [addUserRole, { isLoading: isAddLoading }] = useAddUsersRole();
-
-    const { data: rolesData, isFetching: rolesIsFetching, ...roles } = useGetUsersRolesList();
+    const [updateUserRole, { isLoading: isUpdateLoading }] = useUpdateUsersRole();
+    const deleteUserRoleAction = useDeleteUserRoleAction();
+    const { data: rolesData, isFetching: rolesIsFetching, refetch: rolesRefetch, ...roles } = useGetUsersRolesList();
 
     useEffect(() => {
-        setFormStatus('hide');
-    }, [id]);
+        setFormStatus('loading');
+        if (id) {
+            rolesRefetch();
+        }
+    }, [id, rolesRefetch]);
+
+    useEffect(() => {
+        if (rolesIsFetching) {
+            setFormStatus('loading');
+        }
+    }, [rolesIsFetching]);
 
     useEffect(() => {
         if (formRef.current && formStatus !== 'show' && rightsData && (!id || (id && rolesData && !rolesIsFetching))) {
@@ -47,14 +63,14 @@ export const CreateOrEditRole = memo((props: CreateOrEditRoleProps) => {
             });
 
             if (id) {
-                const role = rolesData?.find((item) => item.id === id);
-                if (role) {
-                    setRole(role);
+                const roleItem = rolesData?.find((item) => item.id === id);
+                if (roleItem) {
+                    setRole(roleItem);
                     initData = {
-                        name: role.name,
+                        name: roleItem.name,
                         rights: {
                             ...initData.rights,
-                            ...role.rights,
+                            ...roleItem.rights,
                         },
                     };
                 }
@@ -71,26 +87,45 @@ export const CreateOrEditRole = memo((props: CreateOrEditRoleProps) => {
             if (!id) {
                 try {
                     const newRole = await addUserRole(data).unwrap();
-                    navigate(`/${moduleConfig.name}/roles/edit/${newRole.id}`);
+                    navigate(`/${usersModuleConfig.name}/roles/edit/${newRole.id}`);
+                } catch (e: any) {
+                    throw new RequestError([e.data.message || 'Unknown error']);
+                }
+            } else {
+                try {
+                    await updateUserRole({ id, data }).unwrap();
+                    rolesRefetch();
                 } catch (e: any) {
                     throw new RequestError([e.data.message || 'Unknown error']);
                 }
             }
         },
-        [id, addUserRole, navigate],
+        [id, addUserRole, updateUserRole, navigate, rolesRefetch],
     );
 
     return (
         <div className={classNames(cls.createOrEditRole, [className])}>
-            <Link to={`/${moduleConfig.name}/roles/edit/1`}>ГО</Link>
-            {id && <>Гарик лох</>}
             <FormBlock
                 initialValues={{}}
                 onSave={onSave}
                 buttonSave={!id ? 'Создать' : undefined}
                 buttonDelete={role?.accessLevel === 'MANUAL' ? undefined : false}
-                onDelete={role?.accessLevel === 'MANUAL' ? () => {} : undefined}
-                returnToListUrl={`/${moduleConfig.name}/roles`}
+                onDeleteTitle={`роль "${role?.name}"`}
+                onDelete={
+                    role?.accessLevel === 'MANUAL'
+                        ? async () => {
+                              if (id) {
+                                  try {
+                                      await deleteUserRoleAction(id);
+                                      navigate(`/${usersModuleConfig.name}/roles`);
+                                  } catch (e: any) {
+                                      throw e;
+                                  }
+                              }
+                          }
+                        : undefined
+                }
+                returnToListUrl={`/${usersModuleConfig.name}/roles`}
                 formRef={formRef}
                 status={formStatus}
             >

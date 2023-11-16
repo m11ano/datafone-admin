@@ -5,7 +5,7 @@ const UsersPage = lazy(() => import('./pages/UsersPage'));
 const RolesPage = lazy(() => import('./pages/RolesPage'));
 const RolesCreateOrEditPage = lazy(() => import('./pages/RolesCreateOrEditPage'));
 
-const routerConfig: ModuleParams['routes'] = [
+const usersRouterConfig: ModuleParams['routes'] = [
     {
         route: {
             path: '/',
@@ -43,4 +43,4 @@ const routerConfig: ModuleParams['routes'] = [
     },
 ];
 
-export default routerConfig;
+export { usersRouterConfig };

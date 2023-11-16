@@ -1,12 +1,11 @@
 import classNames from 'classnames';
 import { memo } from 'react';
 import { RolesList } from '@core/users/entities/RolesList';
-import { Button } from 'antd';
-import { Link } from 'react-router-dom';
-import moduleConfig from '@core/users/Users';
+import { usersModuleConfig } from '@core/users/users';
 import { FileAddOutlined } from '@ant-design/icons';
 import cls from './RolesPage.module.less';
 import { ButtonsPanel } from '@/shared/ui/ButtonsPanel/ButtonsPanel';
+import { ButtonLink } from '@/shared/ui/ButtonLink/ButtonLink';
 
 interface RolesPageProps {
     className?: string;
@@ -19,15 +18,15 @@ export const RolesPage = memo((props: RolesPageProps) => {
         <div className={classNames(cls.rolesPage, [className])}>
             <ButtonsPanel
                 left={
-                    <Link to={`/${moduleConfig.name}/roles/new`}>
-                        <Button
-                            type="primary"
-                            size="large"
-                            icon={<FileAddOutlined />}
-                        >
-                            Создать роль
-                        </Button>
-                    </Link>
+                    <ButtonLink
+                        as="button"
+                        linkTo={`/${usersModuleConfig.name}/roles/new`}
+                        type="primary"
+                        size="large"
+                        icon={<FileAddOutlined />}
+                    >
+                        Создать роль
+                    </ButtonLink>
                 }
             />
             <RolesList />

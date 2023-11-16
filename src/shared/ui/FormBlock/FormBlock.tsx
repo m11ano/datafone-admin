@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Button, Col, Form, Modal, Row, UploadFile } from 'antd';
+import React, { useRef, useState } from 'react';
+import { Alert, Button, Col, Form, Row, UploadFile } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { Link } from 'react-router-dom';
 import { Rule } from 'antd/es/form';
@@ -9,6 +9,8 @@ import cls from './FormBlock.module.less';
 import { RequestError } from '@/shared/lib/errors/RequestError';
 import { ButtonsPanel } from '../ButtonsPanel/ButtonsPanel';
 import { Loader } from '../Loader/Loader';
+import { useDeleteWithConfirm } from '@/shared/lib/hooks/useDeleteWithConfirm/useDeleteWithConfirm';
+import { useLayout } from '@/layouts/AuthLayout/lib/useLayout';
 
 export interface FormBlockProps<T = any> extends React.ComponentProps<typeof Form> {
     className?: string;
@@ -21,7 +23,8 @@ export interface FormBlockProps<T = any> extends React.ComponentProps<typeof For
     buttonReturnToList?: false | string;
     returnToListUrl?: string;
     buttonDelete?: false | string;
-    onDelete?: () => void;
+    onDelete?: string | (() => void);
+    onDeleteTitle?: string;
     status?: 'show' | 'loading' | 'hide';
     formRef?: React.RefObject<FormInstance<any>>;
 }
@@ -39,6 +42,7 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
         returnToListUrl = '',
         buttonDelete = 'Удалить',
         onDelete,
+        onDeleteTitle,
         status = 'show',
         formRef,
         ...extra
@@ -47,9 +51,10 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<string[]>([]);
     const [showSaved, setShowSaved] = useState(false);
-    const showSavedTimer = useRef<ReturnType<typeof setTimeout>>();
+    const { antdHookApi } = useLayout();
 
-    const [modal, contextHolder] = Modal.useModal();
+    const deleteWithConfirm = useDeleteWithConfirm();
+    // const [modal, contextHolder] = Modal.useModal();
 
     const form = useRef<FormInstance>(null);
     const contentRef = useRef<HTMLDivElement>(null);
@@ -62,15 +67,8 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
         setErrors([]);
         setIsLoading(true);
         try {
-            if (showSavedTimer.current) {
-                clearTimeout(showSavedTimer.current);
-            }
-            setShowSaved(false);
             await onSave?.(data);
-            setShowSaved(true);
-            showSavedTimer.current = setTimeout(() => {
-                setShowSaved(false);
-            }, 5000);
+            antdHookApi.message?.success({ content: 'Сохранено', duration: 3 });
         } catch (e: unknown) {
             if (e instanceof RequestError) {
                 setErrors(e.errors);
@@ -103,19 +101,6 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
         }
         setErrors([]);
     };
-
-    useEffect(() => {
-        console.log('FIRST INIT');
-    }, []);
-
-    useEffect(
-        () => () => {
-            if (showSavedTimer.current) {
-                clearTimeout(showSavedTimer.current);
-            }
-        },
-        [],
-    );
 
     return (
         <div
@@ -164,12 +149,15 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
                             icon={<DeleteOutlined />}
                             className={cls.buttonDelete}
                             onClick={async () => {
-                                const confirmed = await modal.confirm({
-                                    title: 'Внимание',
-                                    content: 'Вы действительно хотите удалить?',
-                                });
-                                if (confirmed) {
-                                    onDelete?.();
+                                // const confirmed = await antdHookApi.modal.confirm({
+                                //     title: 'Внимание',
+                                //     content: 'Вы действительно хотите удалить?',
+                                // });
+                                // if (confirmed) {
+                                //     onDelete?.();
+                                // }
+                                if (onDelete) {
+                                    await deleteWithConfirm(onDelete, onDeleteTitle);
                                 }
                             }}
                         >
@@ -178,13 +166,6 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
                     ) : null
                 }
             />
-            {showSaved && (
-                <Alert
-                    message="Сохранено"
-                    type="success"
-                    showIcon
-                />
-            )}
             <Form
                 // ref={form}
                 ref={formRef}
@@ -222,7 +203,6 @@ export const FormBlock = <T,>(props: FormBlockProps<T>) => {
                 )}
                 {status === 'loading' && <Loader position="center" />}
             </Form>
-            {contextHolder}
         </div>
     );
 };
