@@ -3,7 +3,6 @@ import { memo, useMemo } from 'react';
 import { useGetUsersRightsList, useGetUsersRolesList } from '@core/users/shared/api/usersRtkApi';
 import { Table } from 'antd';
 import { IUsersRole } from '@core/users/shared/types/usersRolesTypes';
-import { useNavigate } from 'react-router-dom';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { usersModuleConfig } from '@core/users/users';
 import { useDeleteUserRoleAction } from '@core/users/shared/lib/deleteUserRole';
@@ -24,7 +23,6 @@ export const RolesList = memo((props: RolesListProps) => {
 
     const { data: rightsData, ...rights } = useGetUsersRightsList();
     const { data: rolesData, isFetching: rolesIsFetching, refetch: rolesRefetch, ...roles } = useGetUsersRolesList();
-    const navigate = useNavigate();
     const deleteWithConfirm = useDeleteWithConfirm();
     const deleteUserRoleAction = useDeleteUserRoleAction();
 
@@ -56,6 +54,7 @@ export const RolesList = memo((props: RolesListProps) => {
                 title: 'ID',
                 dataIndex: 'id',
                 key: 'id',
+                width: '100px',
             },
             {
                 title: 'Имя',
@@ -83,6 +82,7 @@ export const RolesList = memo((props: RolesListProps) => {
                         {accessLevel === 'MANUAL' && <>Создано вручную</>}
                     </>
                 ),
+                // width: '50%',
             },
             {
                 title: 'Действия',
@@ -105,6 +105,7 @@ export const RolesList = memo((props: RolesListProps) => {
                             Редактировать
                         </ButtonLink>
                     ),
+                width: '211px',
             },
         ],
         [menu],
@@ -116,6 +117,7 @@ export const RolesList = memo((props: RolesListProps) => {
                 <Loader position="center" />
             ) : (
                 <Table
+                    tableLayout="fixed"
                     dataSource={dataSource}
                     columns={columns}
                     scroll={{ x: true }}

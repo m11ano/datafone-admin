@@ -1,25 +1,35 @@
 import classNames from 'classnames';
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState, Fragment } from 'react';
 import { Input, InputNumber, Switch } from 'antd';
 import { FormInstance } from 'antd/lib';
+import { usersModuleConfig } from '@core/users/users';
+import { useNavigate } from 'react-router-dom';
 import {
     useAddUsersRole,
     useGetUsersRightsList,
     useGetUsersRolesList,
     useUpdateUsersRole,
-} from '@core/users/shared/api/usersRtkApi';
-import { usersModuleConfig } from '@core/users/users';
-import { useNavigate } from 'react-router-dom';
+} from '../../../shared/api/usersRtkApi';
 import { IUsersRole, IUsersRoleItemData } from '../../../shared/types/usersRolesTypes';
 import cls from './CreateOrEditRole.module.less';
 import { FormBlock, FormBlockContent, FormBlockItem, FormBlockProps } from '@/shared/ui/FormBlock/FormBlock';
 import { RequestError } from '@/shared/lib/errors/RequestError';
 import { useDeleteUserRoleAction } from '../../../shared/lib/deleteUserRole';
+import { IUsersRight } from '../../../shared/types/usersRightsTypes';
 
 interface CreateOrEditRoleProps {
     id?: number;
     className?: string;
 }
+
+type RightsDataProccessed = {
+    [key in IUsersRight['sourceType']]: IUsersRight[];
+};
+
+const sourceTypeTitles = {
+    CORE: 'Системные права:',
+    CLIENT: 'Права для модулей:',
+};
 
 export const CreateOrEditRole = memo((props: CreateOrEditRoleProps) => {
     const { id, className } = props;
@@ -35,12 +45,30 @@ export const CreateOrEditRole = memo((props: CreateOrEditRoleProps) => {
     const deleteUserRoleAction = useDeleteUserRoleAction();
     const { data: rolesData, isFetching: rolesIsFetching, refetch: rolesRefetch, ...roles } = useGetUsersRolesList();
 
+    const rightsDataProccessed = useMemo<RightsDataProccessed>(() => {
+        const data: RightsDataProccessed = { CORE: [], CLIENT: [] };
+
+        rightsData?.forEach((right) => {
+            data[right.sourceType].push(right);
+        });
+
+        return data;
+    }, [rightsData]);
+
     useEffect(() => {
         setFormStatus('loading');
         if (id) {
             rolesRefetch();
         }
     }, [id, rolesRefetch]);
+
+    useEffect(() => {
+        if (id && rolesData) {
+            if (!rolesData.find((item) => item.id === id)) {
+                navigate(`/${usersModuleConfig.name}/roles`);
+            }
+        }
+    }, [id, rolesData, navigate]);
 
     useEffect(() => {
         if (rolesIsFetching) {
@@ -138,31 +166,44 @@ export const CreateOrEditRole = memo((props: CreateOrEditRoleProps) => {
                     <Input />
                 </FormBlockItem>
                 <div>
-                    <FormBlockContent label={null}>
-                        <div className={cls.rightsBlockTitle}>Права для роли:</div>
-                    </FormBlockContent>
-                    {rightsData?.map((right) => (
-                        <FormBlockItem
-                            key={right.id}
-                            label={right.title}
-                            name={['rights', `${right.id}`]}
-                            rules={[{ required: true, message: `Значение не указано!` }]}
-                            valuePropName={
-                                right.type === 'NEGATIVE_BOOLEAN' || right.type === 'POSITIVE_BOOLEAN'
-                                    ? 'checked'
-                                    : undefined
-                            }
-                        >
-                            {right.type === 'NEGATIVE_BOOLEAN' ||
-                                (right.type === 'POSITIVE_BOOLEAN' && (
-                                    <Switch
-                                        checkedChildren="Да"
-                                        unCheckedChildren="Нет"
-                                    />
-                                ))}
-                            {right.type === 'NEGATIVE_NUMBER' || (right.type === 'POSITIVE_NUMBER' && <InputNumber />)}
-                        </FormBlockItem>
-                    ))}
+                    {Object.entries(rightsDataProccessed).map(([sourceType, rights]) =>
+                        rights.length === 0 ||
+                        (sourceType === 'CORE' && role && role.accessLevel !== 'MANUAL') ? null : (
+                            <Fragment key={sourceType}>
+                                <FormBlockContent label={null}>
+                                    <div className={cls.rightsBlockTitle}>
+                                        {sourceTypeTitles[sourceType as IUsersRight['sourceType']]}
+                                    </div>
+                                </FormBlockContent>
+                                <div>
+                                    {rights.map((right) => (
+                                        <FormBlockItem
+                                            key={right.id}
+                                            label={right.title}
+                                            name={['rights', `${right.id}`]}
+                                            rules={[{ required: true, message: `Значение не указано!` }]}
+                                            tooltip={right.tooltip || undefined}
+                                            valuePropName={
+                                                right.type === 'NEGATIVE_BOOLEAN' || right.type === 'POSITIVE_BOOLEAN'
+                                                    ? 'checked'
+                                                    : undefined
+                                            }
+                                        >
+                                            {right.type === 'NEGATIVE_BOOLEAN' ||
+                                                (right.type === 'POSITIVE_BOOLEAN' && (
+                                                    <Switch
+                                                        checkedChildren="Да"
+                                                        unCheckedChildren="Нет"
+                                                    />
+                                                ))}
+                                            {right.type === 'NEGATIVE_NUMBER' ||
+                                                (right.type === 'POSITIVE_NUMBER' && <InputNumber />)}
+                                        </FormBlockItem>
+                                    ))}
+                                </div>
+                            </Fragment>
+                        ),
+                    )}
                 </div>
             </FormBlock>
         </div>

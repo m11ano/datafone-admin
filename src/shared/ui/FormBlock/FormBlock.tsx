@@ -299,7 +299,7 @@ export const FormBlockItem = (props: FormBlockItemProps) => {
                         span={24}
                         sm={16}
                     >
-                        {after}!
+                        {after}
                     </Col>
                 </Row>
             )}
@@ -311,25 +311,30 @@ interface FormBlockContentProps {
     label?: null | React.ReactNode;
     className?: string;
     children?: React.ReactNode;
+    contentStyle?: React.CSSProperties;
 }
 
 export const FormBlockContent = (props: FormBlockContentProps) => {
-    const { label, className, children } = props;
+    const { label, className, contentStyle, children } = props;
 
     return (
         <div className={classNames(cls.formBlockContent, className, 'formBlockContent')}>
-            <Row className={classNames(cls.formBlockContentRow)}>
+            <Row
+                className={classNames(cls.formBlockContentRow)}
+                align="middle"
+            >
                 {label !== undefined && (
                     <Col
-                        span={0}
+                        xs={24}
                         sm={8}
                     >
-                        {label}
+                        {label && <div className={cls.formBlockContentLabel}>{label}</div>}
                     </Col>
                 )}
                 <Col
                     span={24}
                     sm={label !== undefined ? 16 : 24}
+                    style={contentStyle}
                 >
                     {children}
                 </Col>

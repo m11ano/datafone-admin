@@ -3,6 +3,8 @@ export interface IUsersBoolRight {
     id: number;
     name: string;
     title: string;
+    tooltip: string;
+    sourceType: 'CORE' | 'CLIENT';
     defaultValue: string;
     defaultRootValue: string;
 }
@@ -12,6 +14,8 @@ export interface IUsersNumberRight {
     id: number;
     name: string;
     title: string;
+    tooltip: string;
+    sourceType: 'CORE' | 'CLIENT';
     defaultValue: string;
     defaultRootValue: string;
 }

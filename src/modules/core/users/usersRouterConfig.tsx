@@ -4,6 +4,7 @@ import { ModuleParams } from '@/shared/config/modules/types';
 const UsersPage = lazy(() => import('./pages/UsersPage'));
 const RolesPage = lazy(() => import('./pages/RolesPage'));
 const RolesCreateOrEditPage = lazy(() => import('./pages/RolesCreateOrEditPage'));
+const UsersCreateOrEditPage = lazy(() => import('./pages/UsersCreateOrEditPage'));
 
 const usersRouterConfig: ModuleParams['routes'] = [
     {
@@ -13,6 +14,22 @@ const usersRouterConfig: ModuleParams['routes'] = [
             selectedMenu: '1_1',
         },
         children: [
+            {
+                route: {
+                    path: '/new',
+                    element: <UsersCreateOrEditPage />,
+                    selectedMenu: '1_1',
+                    breadcrumb: [{ title: 'Создать пользователя' }],
+                },
+            },
+            {
+                route: {
+                    path: '/edit/:id',
+                    element: <UsersCreateOrEditPage />,
+                    selectedMenu: '1_1',
+                    breadcrumb: [{ title: 'Редактировать пользователя' }],
+                },
+            },
             {
                 route: {
                     path: '/roles',
