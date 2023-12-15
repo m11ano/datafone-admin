@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Input, Select, SelectProps, UploadFile } from 'antd';
 import { FormInstance } from 'antd/lib';
-import { usersModuleConfig } from '@core/users/users';
+import { usersModuleConfig } from '@core/users/usersModuleConfig';
 import { useNavigate } from 'react-router-dom';
 import { IUserItem } from '@core/users/shared/types/usersTypes';
 import { getUserQuery } from '@core/users/shared/api/getUserQuery';

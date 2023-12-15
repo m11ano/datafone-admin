@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { memo } from 'react';
 
-import { usersModuleConfig } from '@core/users/users';
+import { usersModuleConfig } from '@core/users/usersModuleConfig';
 import { FileAddOutlined } from '@ant-design/icons';
 import { UsersList } from '@core/users/entities/UsersList';
 import cls from './UsersPage.module.less';

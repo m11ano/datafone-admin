@@ -4,7 +4,7 @@ import { useGetUsersRightsList, useGetUsersRolesList } from '@core/users/shared/
 import { Table } from 'antd';
 import { IUsersRole } from '@core/users/shared/types/usersRolesTypes';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { usersModuleConfig } from '@core/users/users';
+import { usersModuleConfig } from '@core/users/usersModuleConfig';
 import { useDeleteUserRoleAction } from '@core/users/shared/lib/deleteUserRole';
 import cls from './RolesList.module.less';
 import { Loader } from '@/shared/ui/Loader/Loader';

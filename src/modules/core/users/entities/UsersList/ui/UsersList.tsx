@@ -3,7 +3,7 @@ import { memo, useMemo } from 'react';
 import { useGetUsersList, useGetUsersRolesList } from '@core/users/shared/api/usersRtkApi';
 import { Space, Table, Tag } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
-import { usersModuleConfig } from '@core/users/users';
+import { usersModuleConfig } from '@core/users/usersModuleConfig';
 import { IUserList } from '@core/users/shared/types/usersTypes';
 import cls from './UsersList.module.less';
 import { Loader } from '@/shared/ui/Loader/Loader';

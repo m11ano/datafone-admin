@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { memo, useCallback, useEffect, useMemo, useRef, useState, Fragment } from 'react';
 import { Input, InputNumber, Switch } from 'antd';
 import { FormInstance } from 'antd/lib';
-import { usersModuleConfig } from '@core/users/users';
+import { usersModuleConfig } from '@core/users/usersModuleConfig';
 import { useNavigate } from 'react-router-dom';
 import {
     useAddUsersRole,

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { memo } from 'react';
 import { RolesList } from '@core/users/entities/RolesList';
-import { usersModuleConfig } from '@core/users/users';
+import { usersModuleConfig } from '@core/users/usersModuleConfig';
 import { FileAddOutlined } from '@ant-design/icons';
 import cls from './RolesPage.module.less';
 import { ButtonsPanel } from '@/shared/ui/ButtonsPanel/ButtonsPanel';

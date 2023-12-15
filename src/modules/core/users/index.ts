@@ -1,5 +1,5 @@
 import { ModuleParams } from '@/shared/config/modules/types';
-import { usersModuleConfig } from './users';
+import { usersModuleConfig } from './usersModuleConfig';
 import { usersRouterConfig } from './usersRouterConfig';
 
 const moduleParams: ModuleParams = {
