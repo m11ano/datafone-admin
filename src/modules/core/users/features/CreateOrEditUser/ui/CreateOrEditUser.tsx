@@ -23,6 +23,8 @@ interface RightsMapItem {
     value: boolean | number;
 }
 
+const ggwe = 123;
+
 const makeAvatarUploadObject = (user: IUserItem): UploadFile | null =>
     user.avatarOriginal
         ? {
@@ -38,8 +40,11 @@ export const CreateOrEditUser = memo((props: CreateOrEditUserProps) => {
     const { id, className } = props;
 
     const navigate = useNavigate();
+
     const { authUserData } = useAuth();
+
     const [formStatus, setFormStatus] = useState<FormBlockProps['status']>('hide');
+
     const formRef = useRef<FormInstance>(null);
     const rights = useGetUsersRightsList();
     const roles = useGetUsersRolesList();
@@ -52,6 +57,7 @@ export const CreateOrEditUser = memo((props: CreateOrEditUserProps) => {
     useEffect(() => {
         if (!id) {
             setUser(null);
+
             setUserIsLoading(false);
         } else {
             setUserIsLoading(true);
