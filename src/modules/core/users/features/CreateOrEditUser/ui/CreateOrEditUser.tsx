@@ -23,8 +23,6 @@ interface RightsMapItem {
     value: boolean | number;
 }
 
-const ggwe = 123;
-
 const makeAvatarUploadObject = (user: IUserItem): UploadFile | null =>
     user.avatarOriginal
         ? {
