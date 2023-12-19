@@ -47,6 +47,7 @@ export const CreateOrEditUser = memo((props: CreateOrEditUserProps) => {
     const rights = useGetUsersRightsList();
     const roles = useGetUsersRolesList();
     const [user, setUser] = useState<IUserItem | null>(null);
+    const [userRolesFiltered, setUserRolesFiltered] = useState(false);
     const [userIsLoading, setUserIsLoading] = useState<boolean>(false);
 
     const [systemRoles, setSystemRoles] = useState<number[]>([]);
@@ -55,13 +56,13 @@ export const CreateOrEditUser = memo((props: CreateOrEditUserProps) => {
     useEffect(() => {
         if (!id) {
             setUser(null);
-
             setUserIsLoading(false);
         } else {
             setUserIsLoading(true);
             getUserQuery(id)
                 .then((user) => {
                     setUser(user);
+                    setUserRolesFiltered(false);
                     setUserIsLoading(false);
                 })
                 .catch(() => {
@@ -69,15 +70,6 @@ export const CreateOrEditUser = memo((props: CreateOrEditUserProps) => {
                 });
         }
     }, [id, navigate]);
-
-    const isLoading = useMemo<boolean>(
-        () => userIsLoading || rights.isFetching || roles.isFetching,
-        [userIsLoading, rights, roles],
-    );
-
-    useEffect(() => {
-        setFormStatus(isLoading ? 'loading' : 'show');
-    }, [isLoading]);
 
     const rolesOptions = useMemo<SelectProps['options']>(() => {
         const result: SelectProps['options'] = [];
@@ -140,7 +132,7 @@ export const CreateOrEditUser = memo((props: CreateOrEditUserProps) => {
         return map;
     }, [rights]);
 
-    const rightsMap = useMemo(() => {
+    const rightsMap = useMemo<RightsMapItem[]>(() => {
         const result: RightsMapItem[] = [];
 
         if (selectedRoles.length > 0 && roles.data && rightsMapDefault.length > 0) {
@@ -153,20 +145,13 @@ export const CreateOrEditUser = memo((props: CreateOrEditUserProps) => {
                         const rightResultIndex = result.findIndex((i) => i.right.id === Number(rightId));
                         if (rightResultIndex >= 0) {
                             if (result[rightResultIndex].right.type === 'POSITIVE_NUMBER') {
-                                result[rightResultIndex].value =
-                                    rightValue > result[rightResultIndex].value
-                                        ? rightValue
-                                        : result[rightResultIndex].value;
+                                result[rightResultIndex].value = rightValue > result[rightResultIndex].value ? rightValue : result[rightResultIndex].value;
                             } else if (result[rightResultIndex].right.type === 'NEGATIVE_NUMBER') {
-                                result[rightResultIndex].value =
-                                    rightValue < result[rightResultIndex].value
-                                        ? rightValue
-                                        : result[rightResultIndex].value;
+                                result[rightResultIndex].value = rightValue < result[rightResultIndex].value ? rightValue : result[rightResultIndex].value;
                             } else if (result[rightResultIndex].right.type === 'POSITIVE_BOOLEAN') {
                                 result[rightResultIndex].value = rightValue || result[rightResultIndex].value;
                             } else if (result[rightResultIndex].right.type === 'NEGATIVE_BOOLEAN') {
-                                result[rightResultIndex].value =
-                                    rightValue === false ? rightValue : result[rightResultIndex].value;
+                                result[rightResultIndex].value = rightValue === false ? rightValue : result[rightResultIndex].value;
                             }
                         }
                     });
@@ -176,6 +161,19 @@ export const CreateOrEditUser = memo((props: CreateOrEditUserProps) => {
 
         return result;
     }, [selectedRoles, roles, rightsMapDefault]);
+
+    useEffect(() => {
+        if (user && !userRolesFiltered && !roles.isFetching && roles.data) {
+            user.roles = user.roles.filter((roleId) => {
+                const roleItem = roles.data?.find((v) => v.id === roleId);
+                return !!(roleItem && roleItem.accessLevel !== 'SYSTEM');
+            });
+            setUser({
+                ...user,
+            });
+            setUserRolesFiltered(true);
+        }
+    }, [user, roles, userRolesFiltered]);
 
     useEffect(() => {
         if (user) {
@@ -207,6 +205,12 @@ export const CreateOrEditUser = memo((props: CreateOrEditUserProps) => {
         //     }
         // }
     }, []);
+
+    const isLoading = useMemo<boolean>(() => userIsLoading || rights.isFetching || roles.isFetching, [userIsLoading, rights, roles]);
+
+    useEffect(() => {
+        setFormStatus(isLoading ? 'loading' : 'show');
+    }, [isLoading]);
 
     return (
         <div className={classNames(cls.createOrEditUser, [className])}>
